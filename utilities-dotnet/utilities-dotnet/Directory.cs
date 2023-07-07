@@ -2,13 +2,14 @@
 
 public class Directory : ServiceInterface
 {
-    public string[] ServiceUrls(string service)
+    public async Task<string[]> ServiceUrls(string service)
     {
+        // TODO: Fetch stuff
         return new[] { "" };
     }
 
     public void RegisterServiceUrl(string service, string url)
     {
-        
+        // TODO: PUT stuff
     }
 }

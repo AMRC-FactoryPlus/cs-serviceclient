@@ -7,33 +7,36 @@ public class ConfigDB : ServiceInterface
 {
     public async Task<string> GetConfig(string app, string obj)
     {
+        // TODO: Complete method
         return "";
     }
 
     public async Task PutConfig(string app, string obj, string json)
     {
-        
+        // TODO: Complete method
     }
 
     public async Task DeleteConfig(string app, string obj)
     {
-        
+        // TODO: Complete method
     }
 
     public async Task PutConfig(string app, string obj, string type, string patch)
     {
         if (type != "merge") throw new Exception("Only merge-patch supported");
 
+        // TODO: Complete method
     }
 
     public async Task<Guid> CreateObject(string klass, Guid objUUID, bool exclusive)
     {
+        // TODO: Complete method
         return Guid.Empty;
     }
 
     public async Task DeleteObject(Guid objUUID)
     {
-        
+        // TODO: Complete method
     }
 
     public async Task<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)

@@ -15,7 +15,7 @@ public class FetchClass : ServiceInterface
         string serviceUrl = "";
         if (service != null)
         {
-            serviceUrl = Discovery.ServiceUrl((ServiceTypes)service) ?? "";
+            serviceUrl = await new Discovery().ServiceUrl((ServiceTypes)service) ?? "";
             url = url.AppendPathSegment(serviceUrl);
         }
         
@@ -26,6 +26,8 @@ public class FetchClass : ServiceInterface
         }
 
         var response = await DoFetch(url, method);
+        
+        // TODO: Complete method
         
         return response;
     }
