@@ -30,6 +30,30 @@
                                    Foreground="White"
                                    FontSize="22"
                                    Margin="20,0,0,0"/>
+                        
+                        <StackPanel Grid.Row="1">
+                                <RadioButton Content="One"
+                                             Height="50"
+                                             Foreground="White"
+                                             FontSize="14"
+                                             Style="{StaticResource MenuButtonTheme}"/>
+                                
+                                <RadioButton Content="Two"
+                                             Height="50"
+                                             Foreground="White"
+                                             FontSize="14"
+                                             Style="{StaticResource MenuButtonTheme}"/>
+                                
+                                <RadioButton Content="Three"
+                                             Height="50"
+                                             Foreground="White"
+                                             FontSize="14"
+                                             Style="{StaticResource MenuButtonTheme}"/>
+                        </StackPanel>
+                        
+                        <ContentControl Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="10"/>
                 </Grid>
         </Border>
 </Window>
