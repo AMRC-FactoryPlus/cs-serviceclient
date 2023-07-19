@@ -1,15 +1,15 @@
-﻿namespace utilities_dotnet;
+﻿namespace AMRC.FactoryPlus.ServiceClient;
 
 public class Discovery : ServiceInterface
 {
-    public Discovery() : base()
+    public Discovery(ServiceClient serviceClient) : base(serviceClient)
     {
         
     }
 
     public async Task<string[]> FindServiceUrls(string service)
     {
-        return await new Directory().ServiceUrls(service);
+        return await _serviceClient.Directory.ServiceUrls(service);
     }
 
     /* XXX This interface is deprecated. Services may have multiple

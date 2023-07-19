@@ -1,7 +1,12 @@
-﻿namespace utilities_dotnet;
+﻿namespace AMRC.FactoryPlus.ServiceClient;
 
 public class Directory : ServiceInterface
 {
+    public Directory(ServiceClient serviceClient) : base(serviceClient)
+    {
+        
+    }
+    
     public async Task<string[]> ServiceUrls(string service)
     {
         // TODO: Fetch stuff

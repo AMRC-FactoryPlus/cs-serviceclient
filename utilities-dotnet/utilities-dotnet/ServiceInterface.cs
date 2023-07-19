@@ -1,6 +1,6 @@
 ﻿using Flurl.Http;
 
-namespace utilities_dotnet;
+namespace AMRC.FactoryPlus.ServiceClient;
 
 public struct FetchResponse
 {
@@ -16,9 +16,11 @@ public struct FetchResponse
 
 public class ServiceInterface
 {
-    public ServiceInterface()
+    internal ServiceClient _serviceClient;
+    
+    public ServiceInterface(ServiceClient serviceClient)
     {
-        
+        _serviceClient = serviceClient;
     }
 
     public virtual async Task<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)

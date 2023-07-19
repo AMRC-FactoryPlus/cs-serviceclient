@@ -1,10 +1,14 @@
-﻿using System.Reflection.Emit;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace utilities_dotnet;
+namespace AMRC.FactoryPlus.ServiceClient;
 
-public class ConfigDB : ServiceInterface
+public class ConfigDb : ServiceInterface
 {
+    public ConfigDb(ServiceClient serviceClient) : base(serviceClient)
+    {
+        
+    }
+    
     public async Task<string> GetConfig(string app, string obj)
     {
         // TODO: Complete method
@@ -51,8 +55,7 @@ public class ConfigDB : ServiceInterface
                       .Concat(localResults)
                       .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        var fetch = new FetchClass();
-        var response = await fetch.Fetch($"/v1/app/{app}{klass}/search", "GET", queries, ServiceTypes.ConfigDB);
+        var response = await _serviceClient.Fetch.Fetch($"/v1/app/{app}{klass}/search", "GET", queries, ServiceTypes.ConfigDB);
 
         if (response.Status != 200)
         {

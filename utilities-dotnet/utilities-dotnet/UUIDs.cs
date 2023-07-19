@@ -1,4 +1,4 @@
-﻿namespace utilities_dotnet;
+﻿namespace AMRC.FactoryPlus.ServiceClient;
 
 public enum AppSubcomponents
 {
