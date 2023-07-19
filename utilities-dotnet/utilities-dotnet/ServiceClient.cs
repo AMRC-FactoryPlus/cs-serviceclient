@@ -7,7 +7,7 @@ public class ServiceClient
     public Directory Directory;
     public Discovery Discovery;
     public FetchClass Fetch;
-    // TODO: public MQTT Mqtt;
+    public MQTTInterface Mqtt;
 
     public string? ServiceUsername;
     public string? ServicePassword;
@@ -22,6 +22,6 @@ public class ServiceClient
         Directory = new Directory(this);
         Discovery = new Discovery(this);
         Fetch = new FetchClass(this);
-        // TODO: Mqtt = new MQTT(this);
+        Mqtt = new MQTTInterface(this);
     }
 }
