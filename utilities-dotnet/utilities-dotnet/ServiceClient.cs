@@ -1,8 +1,11 @@
 ﻿namespace AMRC.FactoryPlus.ServiceClient;
 
+/// <summary>
+/// The ServiceClient holds interfaces with individual F+ services
+/// </summary>
 public class ServiceClient
 {
-    // TODO: public Auth Auth;
+    public Auth Auth;
     public ConfigDb ConfigDb;
     public Directory Directory;
     public Discovery Discovery;
@@ -15,9 +18,12 @@ public class ServiceClient
     public string? PermissionGroup;
     public string? DirectoryUrl;
 
+    /// <summary>
+    /// Creates a ServiceClient that allows for interaction with F+ services
+    /// </summary>
     public ServiceClient()
     {
-        // TODO: Auth = new Auth(this);
+        Auth = new Auth(this);
         ConfigDb = new ConfigDb(this);
         Directory = new Directory(this);
         Discovery = new Discovery(this);
