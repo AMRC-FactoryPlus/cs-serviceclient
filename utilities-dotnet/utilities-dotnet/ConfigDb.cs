@@ -2,11 +2,23 @@
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
+public struct PutConfigBody
+{
+    public string name;
+    public bool? deleted;
+
+    public PutConfigBody(string name, bool? deleted = null)
+    {
+        this.name = name;
+        this.deleted = deleted;
+    }
+}
+
 public class ConfigDb : ServiceInterface
 {
     public ConfigDb(ServiceClient serviceClient) : base(serviceClient)
     {
-        
+        _serviceType = ServiceTypes.ConfigDB;
     }
     
     public async Task<string> GetConfig(string app, string obj)
@@ -25,15 +37,16 @@ public class ConfigDb : ServiceInterface
         // TODO: Complete method
     }
 
-    public async Task PutConfig(string app, string obj, string type, string patch)
+    public async Task PatchConfig(string app, string obj, string type, string patch)
     {
         if (type != "merge") throw new Exception("Only merge-patch supported");
 
         // TODO: Complete method
     }
 
-    public async Task<Guid> CreateObject(string klass, Guid objUUID, bool exclusive)
+    public async Task<Guid> CreateObject(string klass, Guid? objUUIDNullable = null, bool exclusive = false)
     {
+        Guid objUUID = objUUIDNullable ?? Guid.Empty;
         // TODO: Complete method
         return Guid.Empty;
     }
