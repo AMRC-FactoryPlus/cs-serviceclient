@@ -4,13 +4,18 @@ using Flurl.Http;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
+/// <summary>
+/// The Fetch service interface
+/// </summary>
 public class FetchClass : ServiceInterface
 {
+    /// <inheritdoc />
     public FetchClass(ServiceClient serviceClient) : base(serviceClient)
     {
         // TODO: Set up tokens and inflight requests
     }
 
+    /// <inheritdoc />
     public override async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         string serviceUrl = "";

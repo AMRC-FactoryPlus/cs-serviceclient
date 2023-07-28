@@ -3,9 +3,18 @@ using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
+/// <summary>
+/// The body needed for to POST a principal
+/// </summary>
 public struct PostPrincipalBody
 {
+    /// <summary>
+    /// UUID of the principal
+    /// </summary>
     public Guid Uuid;
+    /// <summary>
+    /// The Kerberos string
+    /// </summary>
     public string Kerberos;
     
     public PostPrincipalBody(Guid uuid, string kerberos)
@@ -33,16 +42,18 @@ public struct PostAceBody
     }
 }
 
-
-
 public enum AceAction
 {
     add,
     delete
 }
 
+/// <summary>
+/// The Auth service interface
+/// </summary>
 public class Auth : ServiceInterface
 {
+    /// <inheritdoc />
     public Auth(ServiceClient serviceClient) : base(serviceClient)
     {
         _serviceType = ServiceTypes.Authentication;

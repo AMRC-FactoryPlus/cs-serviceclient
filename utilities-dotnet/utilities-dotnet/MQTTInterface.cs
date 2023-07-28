@@ -4,13 +4,22 @@ using MQTTnet.Client;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
+/// <summary>
+/// The MQTT service interface
+/// </summary>
 public class MQTTInterface : ServiceInterface
 {
+    /// <inheritdoc />
     public MQTTInterface(ServiceClient serviceClient) : base(serviceClient)
     {
         _serviceType = ServiceTypes.MQTT;
     }
 
+    /// <summary>
+    /// Sets up an MQTTClient connection
+    /// </summary>
+    /// <returns>A connected instance of an MQTTClient</returns>
+    /// <exception cref="Exception"></exception>
     public async UniTask<IMqttClient> GetMqttClient()
     {
         // TODO: Complete method

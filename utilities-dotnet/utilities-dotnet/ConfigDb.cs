@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
+/// <summary>
+/// The body to be used when PUTing a config
+/// </summary>
 public struct PutConfigBody
 {
     public string name;
@@ -15,8 +18,12 @@ public struct PutConfigBody
     }
 }
 
+/// <summary>
+/// The ConfigDB service interface
+/// </summary>
 public class ConfigDb : ServiceInterface
 {
+    /// <inheritdoc />
     public ConfigDb(ServiceClient serviceClient) : base(serviceClient)
     {
         _serviceType = ServiceTypes.ConfigDB;
