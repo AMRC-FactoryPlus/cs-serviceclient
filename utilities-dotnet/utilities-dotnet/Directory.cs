@@ -4,7 +4,7 @@ public class Directory : ServiceInterface
 {
     public Directory(ServiceClient serviceClient) : base(serviceClient)
     {
-        
+        _serviceType = ServiceTypes.Directory;
     }
     
     public async Task<string[]> ServiceUrls(string service)

@@ -7,7 +7,7 @@ public class MQTTInterface : ServiceInterface
 {
     public MQTTInterface(ServiceClient serviceClient) : base(serviceClient)
     {
-        
+        _serviceType = ServiceTypes.MQTT;
     }
 
     public async Task<IMqttClient> GetMqttClient()

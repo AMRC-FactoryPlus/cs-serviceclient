@@ -17,6 +17,7 @@ public struct FetchResponse
 public class ServiceInterface
 {
     internal ServiceClient _serviceClient;
+    internal ServiceTypes _serviceType;
     
     public ServiceInterface(ServiceClient serviceClient)
     {
