@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
@@ -21,42 +22,42 @@ public class ConfigDb : ServiceInterface
         _serviceType = ServiceTypes.ConfigDB;
     }
     
-    public async Task<string> GetConfig(string app, string obj)
+    public async UniTask<string> GetConfig(string app, string obj)
     {
         // TODO: Complete method
         return "";
     }
 
-    public async Task PutConfig(string app, string obj, string json)
+    public async UniTask PutConfig(string app, string obj, string json)
     {
         // TODO: Complete method
     }
 
-    public async Task DeleteConfig(string app, string obj)
+    public async UniTask DeleteConfig(string app, string obj)
     {
         // TODO: Complete method
     }
 
-    public async Task PatchConfig(string app, string obj, string type, string patch)
+    public async UniTask PatchConfig(string app, string obj, string type, string patch)
     {
         if (type != "merge") throw new Exception("Only merge-patch supported");
 
         // TODO: Complete method
     }
 
-    public async Task<Guid> CreateObject(string klass, Guid? objUUIDNullable = null, bool exclusive = false)
+    public async UniTask<Guid> CreateObject(string klass, Guid? objUUIDNullable = null, bool exclusive = false)
     {
         Guid objUUID = objUUIDNullable ?? Guid.Empty;
         // TODO: Complete method
         return Guid.Empty;
     }
 
-    public async Task DeleteObject(Guid objUUID)
+    public async UniTask DeleteObject(Guid objUUID)
     {
         // TODO: Complete method
     }
 
-    public async Task<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
+    public async UniTask<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
     {
         var qs = query
                       .Select(q => new KeyValuePair<string, string>(q.Key, JsonConvert.SerializeObject(q.Value)))
@@ -81,7 +82,7 @@ public class ConfigDb : ServiceInterface
         return uuids;
     }
 
-    public async Task<Guid> Resolve(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
+    public async UniTask<Guid> Resolve(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
     {
         var uuids = await Search(app, query, new Dictionary<string, string>(), klass);
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
@@ -47,25 +48,25 @@ public class Auth : ServiceInterface
         _serviceType = ServiceTypes.Authentication;
     }
 
-    public async Task<bool> CheckAcl(string principal, string permission, string target, bool wild)
+    public async UniTask<bool> CheckAcl(string principal, string permission, string target, bool wild)
     {
         var aclList = await FetchAcl(principal, _serviceClient.PermissionGroup);
         return aclList(permission, target, wild);
     }
 
-    public async Task<Func<string, string, bool, bool>> FetchAcl(string principal, string group)
+    public async UniTask<Func<string, string, bool, bool>> FetchAcl(string principal, string group)
     {
         // TODO: Complete method
         return (s, s1, arg3) => true;
     }
 
-    public async Task<Guid> ResolvePrincipal(string query)
+    public async UniTask<Guid> ResolvePrincipal(string query)
     {
         // TODO: Complete method
         return Guid.Empty;
     }
 
-    public async Task<Guid> FindPrincipal(string kind, string identifier)
+    public async UniTask<Guid> FindPrincipal(string kind, string identifier)
     {
         // TODO: Complete method
         var uuid = String.IsNullOrEmpty(kind) ? await ResolvePrincipal("")
@@ -82,7 +83,7 @@ public class Auth : ServiceInterface
         return Guid.Empty;
     }
 
-    public async Task AddPrincipal(Guid uuid, string kerberos)
+    public async UniTask AddPrincipal(Guid uuid, string kerberos)
     {
         var res = await Fetch("authz/principal", "POST", null, null,
             JsonConvert.SerializeObject(new PostPrincipalBody(uuid, kerberos)));
@@ -93,7 +94,7 @@ public class Auth : ServiceInterface
         }
     }
 
-    public async Task<Guid> CreatePrincipal(string klass, string kerberos, string name)
+    public async UniTask<Guid> CreatePrincipal(string klass, string kerberos, string name)
     {
         var cdb = _serviceClient.ConfigDb;
         var uuid = await cdb.CreateObject(klass);
@@ -117,17 +118,17 @@ public class Auth : ServiceInterface
         return uuid;
     }
 
-    public async Task AddAce(Guid principal, Guid permission, Guid target)
+    public async UniTask AddAce(Guid principal, Guid permission, Guid target)
     {
         await EditAce(new PostAceBody(permission, target, AceAction.add, principal));
     }
 
-    public async Task DeleteAce(Guid principal, Guid permission, Guid target)
+    public async UniTask DeleteAce(Guid principal, Guid permission, Guid target)
     {
         await EditAce(new PostAceBody(permission, target, AceAction.delete, principal));
     }
 
-    public async Task AddToGroup(Guid group, Guid member)
+    public async UniTask AddToGroup(Guid group, Guid member)
     {
         var res = await Fetch($"authz/group/{group}/{member}", "PUT");
         
@@ -137,7 +138,7 @@ public class Auth : ServiceInterface
         }
     }
 
-    public async Task RemoveFromGroup(Guid group, Guid member)
+    public async UniTask RemoveFromGroup(Guid group, Guid member)
     {
         var res = await Fetch($"authz/group/{group}/{member}", "DELETE");
         
@@ -147,7 +148,7 @@ public class Auth : ServiceInterface
         }
     }
 
-    private async Task<Guid[]> ResolvePrincipalByAddress(string address)
+    private async UniTask<Guid[]> ResolvePrincipalByAddress(string address)
     {
         // TODO: Complete method
         var cdb = _serviceClient.ConfigDb;
@@ -161,7 +162,7 @@ public class Auth : ServiceInterface
         return new[] { Guid.Empty };
     }
 
-    private async Task EditAce(PostAceBody spec)
+    private async UniTask EditAce(PostAceBody spec)
     {
         var res = await Fetch("authz/ace", "POST", null, null, JsonConvert.SerializeObject(spec));
 

@@ -1,4 +1,5 @@
-﻿using Flurl;
+﻿using Cysharp.Threading.Tasks;
+using Flurl;
 using Flurl.Http;
 
 namespace AMRC.FactoryPlus.ServiceClient;
@@ -10,7 +11,7 @@ public class FetchClass : ServiceInterface
         // TODO: Set up tokens and inflight requests
     }
 
-    public override async Task<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    public override async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         string serviceUrl = "";
         if (service != null)
@@ -32,7 +33,7 @@ public class FetchClass : ServiceInterface
         return response;
     }
 
-    private async Task<FetchResponse> DoFetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    private async UniTask<FetchResponse> DoFetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         // TODO: Complete method
         var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
@@ -46,14 +47,14 @@ public class FetchClass : ServiceInterface
         return new FetchResponse(response.StatusCode, await response.GetStringAsync());
     }
 
-    private async Task<string> ServiceToken(string serviceUrl)
+    private async UniTask<string> ServiceToken(string serviceUrl)
     {
         // TODO: Complete method
         var token = await FetchToken(serviceUrl);
         return token;
     }
 
-    private async Task<string> FetchToken(string serviceUrl)
+    private async UniTask<string> FetchToken(string serviceUrl)
     {
         // TODO: Complete method
         var tokenUrl = serviceUrl;
@@ -61,7 +62,7 @@ public class FetchClass : ServiceInterface
         return token;
     }
 
-    private async Task<string> GssFetch(string tokenUrl)
+    private async UniTask<string> GssFetch(string tokenUrl)
     {
         // TODO: Complete method
         if (!String.IsNullOrWhiteSpace(_serviceClient.ServiceUsername) && !String.IsNullOrWhiteSpace(_serviceClient.ServicePassword))

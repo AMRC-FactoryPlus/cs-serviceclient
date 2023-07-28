@@ -1,4 +1,5 @@
-﻿using Flurl.Http;
+﻿using Cysharp.Threading.Tasks;
+using Flurl.Http;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
@@ -24,7 +25,7 @@ public class ServiceInterface
         _serviceClient = serviceClient;
     }
 
-    public virtual async Task<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    public virtual async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
         if (!String.IsNullOrWhiteSpace(body))
@@ -37,7 +38,7 @@ public class ServiceInterface
         return new FetchResponse(response.StatusCode, await response.GetStringAsync());
     }
 
-    public async Task<string> Ping()
+    public async UniTask<string> Ping()
     {
         var response = await Fetch("/ping", "GET");
 

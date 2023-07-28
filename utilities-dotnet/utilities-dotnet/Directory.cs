@@ -1,4 +1,6 @@
-﻿namespace AMRC.FactoryPlus.ServiceClient;
+﻿using Cysharp.Threading.Tasks;
+
+namespace AMRC.FactoryPlus.ServiceClient;
 
 public class Directory : ServiceInterface
 {
@@ -7,7 +9,7 @@ public class Directory : ServiceInterface
         _serviceType = ServiceTypes.Directory;
     }
     
-    public async Task<string[]> ServiceUrls(string service)
+    public async UniTask<string[]> ServiceUrls(string service)
     {
         // TODO: Fetch stuff
         return new[] { "" };

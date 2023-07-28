@@ -1,4 +1,5 @@
-﻿using MQTTnet;
+﻿using Cysharp.Threading.Tasks;
+using MQTTnet;
 using MQTTnet.Client;
 
 namespace AMRC.FactoryPlus.ServiceClient;
@@ -10,7 +11,7 @@ public class MQTTInterface : ServiceInterface
         _serviceType = ServiceTypes.MQTT;
     }
 
-    public async Task<IMqttClient> GetMqttClient()
+    public async UniTask<IMqttClient> GetMqttClient()
     {
         // TODO: Complete method
         // Find URL
@@ -24,7 +25,7 @@ public class MQTTInterface : ServiceInterface
         throw new Exception("No username or password available");
     }
 
-    private async Task<IMqttClient> BasicClient(string url, string username, string password)
+    private async UniTask<IMqttClient> BasicClient(string url, string username, string password)
     {
         var mqttFactory = new MqttFactory();
         using var mqttClient = mqttFactory.CreateMqttClient();
