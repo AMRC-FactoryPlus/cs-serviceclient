@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Flurl.Http;
+using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
@@ -27,6 +28,13 @@ public struct FetchResponse
     /// The content returned in the response
     /// </summary>
     public string Content { get; }
+}
+
+public struct PingResponse
+{
+    public string Version;
+
+    public PingResponse(string version) => Version = version;
 }
 
 /// <summary>
@@ -81,7 +89,7 @@ public class ServiceInterface
     /// Attempts to ping the stack
     /// </summary>
     /// <returns>A string of information</returns>
-    public async UniTask<string> Ping()
+    public async UniTask<PingResponse?> Ping()
     {
         var response = await Fetch("/ping", "GET");
 
@@ -90,6 +98,6 @@ public class ServiceInterface
             return null;
         }
 
-        return response.Content;
+        return JsonConvert.DeserializeObject<PingResponse>(response.Content);
     }
 }
