@@ -9,67 +9,147 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// </summary>
 public class FetchClass : ServiceInterface
 {
+    private Dictionary<string, UniTask<FetchResponse>> inflight;
+    private Dictionary<string, UniTask<string>> inflightTokens;
+    private Dictionary<string, string> tokens;
+    
     /// <inheritdoc />
     public FetchClass(ServiceClient serviceClient) : base(serviceClient)
     {
-        // TODO: Set up tokens and inflight requests
+        inflight = new Dictionary<string, UniTask<FetchResponse>>();
+        inflightTokens = new Dictionary<string, UniTask<string>>();
+        tokens = new Dictionary<string, string>();
     }
 
     /// <inheritdoc />
     public override async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
-        string serviceUrl = "";
+        var serviceUrl = "";
+        var amendedUrl = url;
         if (service != null)
         {
             serviceUrl = await _serviceClient.Discovery.ServiceUrl((ServiceTypes)service) ?? "";
-            url = url.AppendPathSegment(serviceUrl);
-        }
-        
-        var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
-        if (!String.IsNullOrWhiteSpace(body))
-        {
-            localHeaders["Content-Type"] = contentType ?? "application/json";
+            amendedUrl = url.AppendPathSegment(serviceUrl);
         }
 
-        var response = await DoFetch(url, method);
-        
-        // TODO: Complete method
+        // Don't mess with stateful requests
+        if (!isIdempotent(method, headers, body))
+        {
+            return await DoFetch(amendedUrl, serviceUrl, method, query, service, body, headers, accept, contentType);
+        }
+
+        // If there is already a request to this URL, we can piggyback on it
+        if (inflight.TryGetValue(amendedUrl, out var currentInflight))
+        {
+            return await currentInflight;
+        }
+
+        var responseTask = DoFetch(amendedUrl, serviceUrl, method);
+        // Store the task for other requests to use
+        inflight[amendedUrl] = responseTask;
+
+        FetchResponse response;
+        try
+        {
+            response = await responseTask;
+        }
+        finally
+        {
+            // Make sure to clear the inflight task whether it is a success or failure
+             inflight.Remove(amendedUrl);
+        }
         
         return response;
     }
 
-    private async UniTask<FetchResponse> DoFetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    private async UniTask<FetchResponse> DoFetch(string url, string serviceUrl, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
-        // TODO: Complete method
-        var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
-        if (!String.IsNullOrWhiteSpace(body))
+        var token = "";
+
+        async Task<FetchResponse> tryFetch()
         {
-            localHeaders["Content-Type"] = contentType ?? "application/json";
+            token = await ServiceToken(serviceUrl, token);
+            if (String.IsNullOrEmpty(token))
+            {
+                return new FetchResponse(401, "");
+            }
+
+            var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
+            if (!String.IsNullOrWhiteSpace(body))
+            {
+                localHeaders["Content-Type"] = contentType ?? "application/json";
+            }
+
+            localHeaders = AddAuthHeaders(headers, "Bearer", token);
+
+            var response = await url.WithHeaders(localHeaders)
+                                    .SetQueryParams(query)
+                                    .SendUrlEncodedAsync(new HttpMethod(method), body, CancellationToken.None)
+                                    .WaitAsync(CancellationToken.None);
+
+            return new FetchResponse(response.StatusCode, await response.GetStringAsync());
         }
 
-        var response = await url.WithHeaders(localHeaders).SetQueryParams(query).SendUrlEncodedAsync(new HttpMethod(method), body, CancellationToken.None).WaitAsync(CancellationToken.None);
+        var res = await tryFetch();
+        if (res.Status == 401)
+        {
+            res = await tryFetch();
+        }
         
-        return new FetchResponse(response.StatusCode, await response.GetStringAsync());
+        return res;
     }
 
-    private async UniTask<string> ServiceToken(string serviceUrl)
+    private async UniTask<string> ServiceToken(string serviceUrl, string? badToken)
     {
-        // TODO: Complete method
-        var token = await FetchToken(serviceUrl);
+        var token = "";
+        if (tokens.TryGetValue(serviceUrl, out token))
+        { }
+        else
+        {
+            if (inflightTokens.TryGetValue(serviceUrl, out var inflightToken))
+            {
+                var resolvedToken = await inflightToken;
+                Console.WriteLine($"Using token {resolvedToken} for {serviceUrl}");
+                return resolvedToken;
+            }
+        }
+
+        var isBad = !String.IsNullOrEmpty(badToken) && token == badToken;
+        if (String.IsNullOrEmpty(token) || isBad)
+        {
+            var tokenRequest = FetchToken(serviceUrl);
+            inflightTokens[serviceUrl] = tokenRequest;
+        }
+
+        try
+        {
+            token = await FetchToken(serviceUrl);
+            Console.WriteLine($"Using token {token} for {serviceUrl}");
+        }
+        finally
+        {
+            inflightTokens.Remove(serviceUrl);
+        }
         return token;
     }
 
     private async UniTask<string> FetchToken(string serviceUrl)
     {
-        // TODO: Complete method
-        var tokenUrl = serviceUrl;
-        var token = await GssFetch(tokenUrl);
+        var tokenUrl = $"/token/{serviceUrl}";
+        var res = await GssFetch(tokenUrl);
+
+        if (res.Status != 200)
+        {
+            throw new Exception($"Token fetch failed for {serviceUrl}");
+        }
+
+        var token = res.Content;
+        tokens[serviceUrl] = token;
         return token;
     }
 
-    private async UniTask<string> GssFetch(string tokenUrl)
+    private async UniTask<FetchResponse> GssFetch(string tokenUrl)
     {
-        // TODO: Complete method
         if (!String.IsNullOrWhiteSpace(_serviceClient.ServiceUsername) && !String.IsNullOrWhiteSpace(_serviceClient.ServicePassword))
         {
             // Use basic auth
@@ -78,9 +158,13 @@ public class FetchClass : ServiceInterface
             var headers = AddAuthHeaders(null, "Basic", authString);
             var response = await tokenUrl.WithHeaders(headers).SendUrlEncodedAsync(new HttpMethod("POST"), null, CancellationToken.None).WaitAsync(CancellationToken.None);
 
-            return await response.GetStringAsync();
+            return new FetchResponse(response.StatusCode, await response.GetStringAsync());
         }
-        return "";
+        else
+        {
+            throw new Exception("Only Basic auth supported at this time. Ensure config has username and password");
+        }
+        return new FetchResponse(400, "");
     }
 
     private Dictionary<string, string> AddAuthHeaders(Dictionary<string, string>? existingHeaders, string scheme,
