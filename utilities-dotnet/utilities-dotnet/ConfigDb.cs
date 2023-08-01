@@ -18,6 +18,18 @@ public struct PutConfigBody
     }
 }
 
+public struct PrinicpalConfig
+{
+    public string GroupId;
+    public string NodeId;
+
+    public PrinicpalConfig(string groupId, string nodeId)
+    {
+        GroupId = groupId;
+        NodeId = nodeId;
+    }
+}
+
 /// <summary>
 /// The ConfigDB service interface
 /// </summary>
@@ -29,10 +41,24 @@ public class ConfigDb : ServiceInterface
         _serviceType = ServiceTypes.ConfigDB;
     }
     
-    public async UniTask<string> GetConfig(string app, string obj)
+    public async UniTask<PrinicpalConfig?> GetConfig(string app, string obj)
     {
-        // TODO: Complete method
-        return "";
+        var res = await Fetch(
+            $"/v1/app/{app}/object/{obj}",
+            "GET"
+        );
+
+        if (res.Status == 404)
+        {
+            return null;
+        }
+
+        if (res.Status != 200)
+        {
+            throw new Exception($"{res.Status}: Can't get {app} for {obj}");
+        }
+        
+        return JsonConvert.DeserializeObject<PrinicpalConfig>(res.Content);
     }
 
     public async UniTask PutConfig(string app, string obj, string json)
@@ -64,7 +90,7 @@ public class ConfigDb : ServiceInterface
         // TODO: Complete method
     }
 
-    public async UniTask<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
+    public async UniTask<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string klass = "")
     {
         var qs = query
                       .Select(q => new KeyValuePair<string, string>(q.Key, JsonConvert.SerializeObject(q.Value)))
