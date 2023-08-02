@@ -13,15 +13,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="utilities-dotnet">
-        <HintPath>lib\utilities-dotnet.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Flurl.Http" Version="3.2.4" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="UniTask" Version="2.3.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\utilities-dotnet\utilities-dotnet\utilities-dotnet.csproj" />
     </ItemGroup>
 
 </Project>
