@@ -55,10 +55,7 @@ public class ConfigDb : ServiceInterface
     
     public async UniTask<PrinicpalConfig?> GetConfig(string app, string obj)
     {
-        var res = await Fetch(
-            $"/v1/app/{app}/object/{obj}",
-            "GET"
-        );
+        var res = await Fetch($"/v1/app/{app}/object/{obj}");
 
         if (res.Status == 404)
         {

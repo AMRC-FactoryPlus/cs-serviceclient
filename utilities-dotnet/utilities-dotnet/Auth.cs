@@ -197,10 +197,7 @@ public class Auth : ServiceInterface
             return null;
         }
 
-        var res = await Fetch(
-            $"/authz/principal/{uuid}",
-            "GET"
-        );
+        var res = await Fetch($"/authz/principal/{uuid}");
 
         if (res.Status != 200)
         {
