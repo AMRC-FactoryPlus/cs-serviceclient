@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Runtime.Serialization;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using Semver;
 
@@ -24,8 +25,8 @@ public struct PostAceBody
 
 public struct Address
 {
-    public readonly string Group;
-    public readonly string Node;
+    public string Group;
+    public string Node;
 
     public Address(string group, string node)
     {
@@ -36,8 +37,8 @@ public struct Address
 
 public struct PrincipalMapping
 {
-    public readonly Guid Uuid;
-    public readonly string Kerberos;
+    public Guid Uuid;
+    public string Kerberos;
     public Address? Sparkplug;
 
     public PrincipalMapping(Guid uuid, string kerberos, Address? sparkplugAddress)
@@ -65,10 +66,10 @@ public struct FetchAclQuery
 
 public struct Ace
 {
-    public readonly Guid Permission;
-    public readonly Guid Target;
-    public readonly Guid Principal;
-    public readonly string Kerberos;
+    public Guid Permission;
+    public Guid Target;
+    public Guid Principal;
+    public string Kerberos;
 
     public Ace(Guid permission, Guid target, Guid? principal = null, string kerberos = "")
     {
@@ -82,15 +83,17 @@ public struct Ace
 public struct Acl
 {
     [JsonProperty("acl")]
-    public readonly List<Ace> AclList;
+    public List<Ace> AclList;
 
     public Acl(List<Ace> aclList) => AclList = aclList;
 }
 
 public enum AceAction
 {
-    add,
-    delete
+    [EnumMember(Value = "add")] 
+    Add,
+    [EnumMember(Value = "delete")] 
+    Delete
 }
 
 /// <summary>
@@ -258,12 +261,12 @@ public class Auth : ServiceInterface
 
     public async UniTask AddAce(Guid principal, Guid permission, Guid target)
     {
-        await EditAce(new PostAceBody(permission, target, AceAction.add, principal));
+        await EditAce(new PostAceBody(permission, target, AceAction.Add, principal));
     }
 
     public async UniTask DeleteAce(Guid principal, Guid permission, Guid target)
     {
-        await EditAce(new PostAceBody(permission, target, AceAction.delete, principal));
+        await EditAce(new PostAceBody(permission, target, AceAction.Delete, principal));
     }
 
     public async UniTask AddToGroup(Guid group, Guid member)
