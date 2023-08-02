@@ -1,6 +1,27 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
+
+public struct ServiceProvider
+{
+    public Guid Device;
+    public string Url;
+
+    public ServiceProvider(Guid device, string url)
+    {
+        Device = device;
+        Url = url;
+    }
+}
+
+public struct ServiceProviderList
+{
+    public List<ServiceProvider> List;
+
+    public ServiceProviderList(List<ServiceProvider> list) => List = list;
+}
 
 /// <summary>
 /// The Directory service interface
@@ -10,7 +31,7 @@ public class Directory : ServiceInterface
     /// <inheritdoc />
     public Directory(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.Directory;
+        ServiceType = ServiceTypes.Directory;
     }
     
     /// <summary>
@@ -20,12 +41,32 @@ public class Directory : ServiceInterface
     /// <returns>List of URLs</returns>
     public async UniTask<string[]> ServiceUrls(string service)
     {
-        // TODO: Fetch stuff
-        return new[] { "" };
+        var res = await Fetch($"/v1/service/{service}");
+
+        if (res.Status == 404)
+        {
+            Debug.WriteLine($"{res.Status}: Can't find service {service}");
+            return new string[]{};
+        }
+
+        if (res.Status != 200)
+        {
+            throw new Exception($"{res.Status}: Can't get service records for {service}");
+        }
+
+        var specs = JsonConvert.DeserializeObject<List<ServiceProvider>>(res.Content);
+        return specs.Select(s => s.Url).Where(s => !String.IsNullOrEmpty(s)).ToArray();
     }
 
-    public void RegisterServiceUrl(string service, string url)
+    public async void RegisterServiceUrl(string service, string url)
     {
-        // TODO: PUT stuff
+        var res = await Fetch($"/v1/service/{service}/advertisment", "PUT", null, null, $"{{\"url\": \"{url}\"}}");
+        
+        if (res.Status != 204)
+        {
+            throw new Exception($"{res.Status}: Can't register service {service}");
+        }
+
+        Debug.WriteLine($"Registered {url} for {service}");
     }
 }

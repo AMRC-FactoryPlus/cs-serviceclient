@@ -7,12 +7,12 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// <summary>
 /// The MQTT service interface
 /// </summary>
-public class MQTTInterface : ServiceInterface
+public class MqttInterface : ServiceInterface
 {
     /// <inheritdoc />
-    public MQTTInterface(ServiceClient serviceClient) : base(serviceClient)
+    public MqttInterface(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.MQTT;
+        ServiceType = ServiceTypes.MQTT;
     }
 
     /// <summary>
@@ -20,15 +20,23 @@ public class MQTTInterface : ServiceInterface
     /// </summary>
     /// <returns>A connected instance of an MQTTClient</returns>
     /// <exception cref="Exception"></exception>
-    public async UniTask<IMqttClient> GetMqttClient()
+    public async UniTask<IMqttClient> GetMqttClient(string? host)
     {
-        // TODO: Complete method
-        // Find URL
-        var url = "";
-        if (!String.IsNullOrWhiteSpace(_serviceClient.ServiceUsername) &&
-            !String.IsNullOrWhiteSpace(_serviceClient.ServicePassword))
+        var url = host ?? "";
+        if (String.IsNullOrEmpty(url))
         {
-            return await BasicClient(url, _serviceClient.ServiceUsername, _serviceClient.ServicePassword);
+            url = await ServiceClient.Discovery.ServiceUrl(UUIDs.Service[ServiceTypes.MQTT]);
+        }
+
+        if (String.IsNullOrEmpty(url))
+        {
+            throw new Exception("No host provided and no url could be found");
+        }
+        
+        if (!String.IsNullOrEmpty(ServiceClient.ServiceUsername) &&
+            !String.IsNullOrEmpty(ServiceClient.ServicePassword))
+        {
+            return await BasicClient(url, ServiceClient.ServiceUsername, ServiceClient.ServicePassword);
         }
 
         throw new Exception("No username or password available");

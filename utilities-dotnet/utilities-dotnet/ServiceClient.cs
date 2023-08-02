@@ -5,29 +5,41 @@
 /// </summary>
 public class ServiceClient
 {
-    public Auth Auth;
-    public ConfigDb ConfigDb;
-    public Directory Directory;
-    public Discovery Discovery;
-    public FetchClass Fetch;
-    public MQTTInterface Mqtt;
+    public readonly Auth Auth;
+    public readonly ConfigDb ConfigDb;
+    public readonly Directory Directory;
+    public readonly Discovery Discovery;
+    public readonly FetchClass Fetch;
+    public readonly MqttInterface Mqtt;
 
-    public string? ServiceUsername;
-    public string? ServicePassword;
-    public string? RootPrincipal;
-    public string? PermissionGroup;
-    public string? DirectoryUrl;
+    public readonly string? ServiceUsername;
+    public readonly string? ServicePassword;
+    public readonly string? RootPrincipal;
+    public readonly string? PermissionGroup;
+    public readonly string? AuthnUrl;
+    public readonly string? ConfigDbUrl;
+    public readonly string? DirectoryUrl;
+    public readonly string? MqttUrl;
 
     /// <summary>
     /// Creates a ServiceClient that allows for interaction with F+ services
     /// </summary>
     public ServiceClient()
     {
+        ServiceUsername = Environment.GetEnvironmentVariable("ServiceUsername");
+        ServicePassword = Environment.GetEnvironmentVariable("ServicePassword");
+        RootPrincipal = Environment.GetEnvironmentVariable("RootPrincipal");
+        PermissionGroup = Environment.GetEnvironmentVariable("PermissionGroup");
+        AuthnUrl = Environment.GetEnvironmentVariable("AuthnUrl");
+        ConfigDbUrl = Environment.GetEnvironmentVariable("ConfigDbUrl");
+        DirectoryUrl = Environment.GetEnvironmentVariable("DirectoryUrl");
+        MqttUrl = Environment.GetEnvironmentVariable("MqttUrl");
+        
         Auth = new Auth(this);
         ConfigDb = new ConfigDb(this);
         Directory = new Directory(this);
         Discovery = new Discovery(this);
         Fetch = new FetchClass(this);
-        Mqtt = new MQTTInterface(this);
+        Mqtt = new MqttInterface(this);
     }
 }
