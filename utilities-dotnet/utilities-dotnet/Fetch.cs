@@ -28,7 +28,7 @@ public class FetchClass : ServiceInterface
         var amendedUrl = url;
         if (service != null)
         {
-            serviceUrl = await _serviceClient.Discovery.ServiceUrl((Guid)service) ?? "";
+            serviceUrl = await ServiceClient.Discovery.ServiceUrl((Guid)service) ?? "";
             amendedUrl = url.AppendPathSegment(serviceUrl);
         }
 
@@ -150,10 +150,10 @@ public class FetchClass : ServiceInterface
 
     private async UniTask<FetchResponse> GssFetch(string tokenUrl)
     {
-        if (!String.IsNullOrWhiteSpace(_serviceClient.ServiceUsername) && !String.IsNullOrWhiteSpace(_serviceClient.ServicePassword))
+        if (!String.IsNullOrWhiteSpace(ServiceClient.ServiceUsername) && !String.IsNullOrWhiteSpace(ServiceClient.ServicePassword))
         {
             // Use basic auth
-            var authBytes = System.Text.Encoding.UTF8.GetBytes($"{_serviceClient.ServiceUsername}:{_serviceClient.ServicePassword}");
+            var authBytes = System.Text.Encoding.UTF8.GetBytes($"{ServiceClient.ServiceUsername}:{ServiceClient.ServicePassword}");
             var authString = System.Convert.ToBase64String(authBytes);
             var headers = AddAuthHeaders(null, "Basic", authString);
             var response = await tokenUrl.WithHeaders(headers).SendUrlEncodedAsync(new HttpMethod("POST"), null, CancellationToken.None).WaitAsync(CancellationToken.None);

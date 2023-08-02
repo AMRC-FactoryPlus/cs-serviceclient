@@ -12,7 +12,7 @@ public class MQTTInterface : ServiceInterface
     /// <inheritdoc />
     public MQTTInterface(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.MQTT;
+        ServiceType = ServiceTypes.MQTT;
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ public class MQTTInterface : ServiceInterface
         var url = host ?? "";
         if (String.IsNullOrEmpty(url))
         {
-            url = await _serviceClient.Discovery.ServiceUrl(UUIDs.Service[ServiceTypes.MQTT]);
+            url = await ServiceClient.Discovery.ServiceUrl(UUIDs.Service[ServiceTypes.MQTT]);
         }
 
         if (String.IsNullOrEmpty(url))
@@ -33,10 +33,10 @@ public class MQTTInterface : ServiceInterface
             throw new Exception("No host provided and no url could be found");
         }
         
-        if (!String.IsNullOrEmpty(_serviceClient.ServiceUsername) &&
-            !String.IsNullOrEmpty(_serviceClient.ServicePassword))
+        if (!String.IsNullOrEmpty(ServiceClient.ServiceUsername) &&
+            !String.IsNullOrEmpty(ServiceClient.ServicePassword))
         {
-            return await BasicClient(url, _serviceClient.ServiceUsername, _serviceClient.ServicePassword);
+            return await BasicClient(url, ServiceClient.ServiceUsername, ServiceClient.ServicePassword);
         }
 
         throw new Exception("No username or password available");

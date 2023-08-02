@@ -30,7 +30,7 @@ public class Directory : ServiceInterface
     /// <inheritdoc />
     public Directory(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.Directory;
+        ServiceType = ServiceTypes.Directory;
     }
     
     /// <summary>

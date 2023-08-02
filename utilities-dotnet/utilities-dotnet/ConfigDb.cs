@@ -50,7 +50,7 @@ public class ConfigDb : ServiceInterface
     /// <inheritdoc />
     public ConfigDb(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.ConfigDB;
+        ServiceType = ServiceTypes.ConfigDB;
     }
     
     public async UniTask<PrinicpalConfig?> GetConfig(Guid app, Guid obj)
@@ -151,7 +151,7 @@ public class ConfigDb : ServiceInterface
                       .Concat(localResults)
                       .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        var response = await _serviceClient.Fetch.Fetch($"/v1/app/{app}{klass}/search", "GET", queries, UUIDs.Service[ServiceTypes.ConfigDB]);
+        var response = await ServiceClient.Fetch.Fetch($"/v1/app/{app}{klass}/search", "GET", queries, UUIDs.Service[ServiceTypes.ConfigDB]);
 
         if (response.Status != 200)
         {

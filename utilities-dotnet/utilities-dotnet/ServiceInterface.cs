@@ -32,7 +32,7 @@ public struct FetchResponse
 
 public struct PingResponse
 {
-    public string Version;
+    public readonly string Version;
 
     public PingResponse(string version) => Version = version;
 }
@@ -45,11 +45,11 @@ public class ServiceInterface
     /// <summary>
     /// A reference to the ServiceClient that has been created
     /// </summary>
-    internal ServiceClient _serviceClient;
+    internal readonly ServiceClient ServiceClient;
     /// <summary>
     /// The ServiceType that this service is
     /// </summary>
-    internal ServiceTypes _serviceType;
+    internal ServiceTypes ServiceType;
     
     /// <summary>
     /// Creates a ServiceInterface object
@@ -57,7 +57,7 @@ public class ServiceInterface
     /// <param name="serviceClient">The ServiceClient that this interface will talk to</param>
     public ServiceInterface(ServiceClient serviceClient)
     {
-        _serviceClient = serviceClient;
+        ServiceClient = serviceClient;
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public class ServiceInterface
     /// <returns>A string of information</returns>
     public async UniTask<PingResponse?> Ping()
     {
-        var response = await Fetch("/ping", "GET");
+        var response = await Fetch("/ping");
 
         if (response.Status != 200)
         {

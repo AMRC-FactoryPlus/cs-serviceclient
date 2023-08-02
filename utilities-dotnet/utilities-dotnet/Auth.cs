@@ -101,12 +101,12 @@ public class Auth : ServiceInterface
     /// <inheritdoc />
     public Auth(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.Authentication;
+        ServiceType = ServiceTypes.Authentication;
     }
 
     public async UniTask<bool> CheckAcl(string? kerberos, Guid? uuid, string permission, string target, bool wild)
     {
-        var aclList = await FetchAcl(kerberos, uuid, _serviceClient.PermissionGroup ?? "");
+        var aclList = await FetchAcl(kerberos, uuid, ServiceClient.PermissionGroup ?? "");
         return aclList(permission, target, wild);
     }
 
@@ -134,16 +134,16 @@ public class Auth : ServiceInterface
             return (s1, s2, b1) => false;
         }
 
-        if (!String.IsNullOrEmpty(_serviceClient.RootPrincipal)
+        if (!String.IsNullOrEmpty(ServiceClient.RootPrincipal)
          && type == "kerberos"
-         && principal == _serviceClient.RootPrincipal)
+         && principal == ServiceClient.RootPrincipal)
         {
             return (s1, s2, b1) => true;
         }
 
         var isUuid = type == "uuid";
 
-        var res = await _serviceClient.Fetch.Fetch(
+        var res = await ServiceClient.Fetch.Fetch(
             "/authz/acl",
             "GET",
             new FetchAclQuery(principal, permissionGroup, isUuid),
@@ -167,7 +167,7 @@ public class Auth : ServiceInterface
 
     public async UniTask<Guid> ResolvePrincipal(string query)
     {
-        var res = await _serviceClient.Fetch.Fetch(
+        var res = await ServiceClient.Fetch.Fetch(
             "/authz/principal/find",
             "GET", 
             query, 
@@ -207,7 +207,7 @@ public class Auth : ServiceInterface
 
         var ids = JsonConvert.DeserializeObject<PrincipalMapping>(res.Content);
         
-        var spConfig = await _serviceClient.ConfigDb.GetConfig(UUIDs.App[AppSubcomponents.SparkplugAddress], (Guid)uuid);
+        var spConfig = await ServiceClient.ConfigDb.GetConfig(UUIDs.App[AppSubcomponents.SparkplugAddress], (Guid)uuid);
         if (spConfig != null)
         {
             ids.Sparkplug = new Address(spConfig?.GroupId, spConfig?.NodeId);
@@ -234,7 +234,7 @@ public class Auth : ServiceInterface
 
     public async UniTask<Guid> CreatePrincipal(Guid klass, string kerberos, string name)
     {
-        var cdb = _serviceClient.ConfigDb;
+        var cdb = ServiceClient.ConfigDb;
         var uuid = await cdb.CreateObject(klass);
 
         try
@@ -288,7 +288,7 @@ public class Auth : ServiceInterface
 
     private async UniTask<Guid[]> ResolvePrincipalByAddress(Address address)
     {
-        var cdb = _serviceClient.ConfigDb;
+        var cdb = ServiceClient.ConfigDb;
         var ping = await cdb.Ping();
         if (String.IsNullOrEmpty(ping?.Version) || !SemVersion.Parse(ping?.Version).Satisfies(">=1.7 || =1.7.0-bmz"))
         {

@@ -16,10 +16,10 @@ public class Discovery : ServiceInterface
         _urls = new Dictionary<Guid, string>();
         _presets = new Dictionary<Guid, string?>
         {
-            {UUIDs.Service[ServiceTypes.Authentication], _serviceClient.AuthnUrl},
-            {UUIDs.Service[ServiceTypes.ConfigDB], _serviceClient.ConfigDbUrl},
-            {UUIDs.Service[ServiceTypes.Directory], _serviceClient.DirectoryUrl},
-            {UUIDs.Service[ServiceTypes.MQTT], _serviceClient.MqttUrl}
+            {UUIDs.Service[ServiceTypes.Authentication], ServiceClient.AuthnUrl},
+            {UUIDs.Service[ServiceTypes.ConfigDB], ServiceClient.ConfigDbUrl},
+            {UUIDs.Service[ServiceTypes.Directory], ServiceClient.DirectoryUrl},
+            {UUIDs.Service[ServiceTypes.MQTT], ServiceClient.MqttUrl}
         };
 
         foreach (var preset in _presets)
@@ -41,7 +41,7 @@ public class Discovery : ServiceInterface
     /// <returns>List of URLs</returns>
     public async UniTask<string[]> FindServiceUrls(string service)
     {
-        return await _serviceClient.Directory.ServiceUrls(service);
+        return await ServiceClient.Directory.ServiceUrls(service);
     }
 
     /* XXX This interface is deprecated. Services may have multiple
