@@ -20,13 +20,21 @@ public class MQTTInterface : ServiceInterface
     /// </summary>
     /// <returns>A connected instance of an MQTTClient</returns>
     /// <exception cref="Exception"></exception>
-    public async UniTask<IMqttClient> GetMqttClient()
+    public async UniTask<IMqttClient> GetMqttClient(string? host)
     {
-        // TODO: Complete method
-        // Find URL
-        var url = "";
-        if (!String.IsNullOrWhiteSpace(_serviceClient.ServiceUsername) &&
-            !String.IsNullOrWhiteSpace(_serviceClient.ServicePassword))
+        var url = host ?? "";
+        if (String.IsNullOrEmpty(url))
+        {
+            url = await _serviceClient.Discovery.ServiceUrl(UUIDs.Service[ServiceTypes.MQTT]);
+        }
+
+        if (String.IsNullOrEmpty(url))
+        {
+            throw new Exception("No host provided and no url could be found");
+        }
+        
+        if (!String.IsNullOrEmpty(_serviceClient.ServiceUsername) &&
+            !String.IsNullOrEmpty(_serviceClient.ServicePassword))
         {
             return await BasicClient(url, _serviceClient.ServiceUsername, _serviceClient.ServicePassword);
         }
