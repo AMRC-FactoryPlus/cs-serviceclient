@@ -18,6 +18,18 @@ public struct PutConfigBody
     }
 }
 
+public struct ObjectRegistration
+{
+    public Guid Uuid;
+    public Guid Class;
+
+    public ObjectRegistration(Guid uuid, Guid @class)
+    {
+        Uuid = uuid;
+        Class = @class;
+    }
+}
+
 public struct PrinicpalConfig
 {
     public string GroupId;
@@ -63,31 +75,71 @@ public class ConfigDb : ServiceInterface
 
     public async UniTask PutConfig(string app, string obj, string json)
     {
-        // TODO: Complete method
+        var res = await Fetch($"/v1/app/{app}/object/{obj}", "PUT", null, null, json);
+        if (res.Status == 204)
+        {
+            return;
+        }
+
+        throw new Exception($"{res.Status}: Can't set {app} for {obj}");
     }
 
     public async UniTask DeleteConfig(string app, string obj)
     {
-        // TODO: Complete method
+        var res = await Fetch($"/v1/app/{app}/object/{obj}", "DELETE");
+        if (res.Status == 204)
+        {
+            return;
+        }
+
+        throw new Exception($"{res.Status}: Can't remove {app} for {obj}");
     }
 
     public async UniTask PatchConfig(string app, string obj, string type, string patch)
     {
         if (type != "merge") throw new Exception("Only merge-patch supported");
+        
+        var res = await Fetch($"/v1/app/{app}/object/{obj}", "PATCH", null, null, patch, null, null, "application/merge-patch+json");
+        if (res.Status == 204)
+        {
+            return;
+        }
 
-        // TODO: Complete method
+        throw new Exception($"{res.Status}: Can't patch {app} for {obj}");
     }
 
-    public async UniTask<Guid> CreateObject(string klass, Guid? objUUIDNullable = null, bool exclusive = false)
+    public async UniTask<Guid> CreateObject(Guid klass, Guid? objUUIDNullable = null, bool exclusive = false)
     {
         Guid objUUID = objUUIDNullable ?? Guid.Empty;
-        // TODO: Complete method
-        return Guid.Empty;
+        var res = await Fetch("/v1/object", "POST", null, null, JsonConvert.SerializeObject(new ObjectRegistration(objUUID, klass)));
+        if (res.Status == 200 && exclusive)
+        {
+            throw new Exception($"Exclusive create of {objUUIDNullable} failed");
+        }
+
+        if (res.Status == 201 || res.Status == 200)
+        {
+            return JsonConvert.DeserializeObject<ObjectRegistration>(res.Content).Uuid;
+        }
+
+        if (objUUIDNullable != null)
+        {
+            throw new Exception($"{res.Status}: Creating {objUUIDNullable} failed");
+        }
+
+        throw new Exception($"{res.Status}: Creating new {klass} failed");
     }
 
     public async UniTask DeleteObject(Guid objUUID)
     {
-        // TODO: Complete method
+        var res = await Fetch($"/v1/object/{objUUID}", "DELETE");
+        
+        if (res.Status == 204)
+        {
+            return;
+        }
+
+        throw new Exception($"{res.Status}: Deleting {objUUID} failed");
     }
 
     public async UniTask<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string klass = "")

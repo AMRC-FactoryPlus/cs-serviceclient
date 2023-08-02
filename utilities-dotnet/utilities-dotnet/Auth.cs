@@ -235,7 +235,7 @@ public class Auth : ServiceInterface
         }
     }
 
-    public async UniTask<Guid> CreatePrincipal(string klass, string kerberos, string name)
+    public async UniTask<Guid> CreatePrincipal(Guid klass, string kerberos, string name)
     {
         var cdb = _serviceClient.ConfigDb;
         var uuid = await cdb.CreateObject(klass);
