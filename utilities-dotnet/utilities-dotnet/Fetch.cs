@@ -115,9 +115,7 @@ public class FetchClass : ServiceInterface
 
     private async UniTask<string> ServiceToken(string serviceUrl, string? badToken)
     {
-        if (_tokens.TryGetValue(serviceUrl, out var token))
-        { }
-        else
+        if (!_tokens.TryGetValue(serviceUrl, out var token))
         {
             if (_inflightTokens.TryGetValue(serviceUrl, out var inflightToken))
             {
@@ -128,21 +126,23 @@ public class FetchClass : ServiceInterface
         }
 
         var isBad = !String.IsNullOrEmpty(badToken) && token == badToken;
-        if (String.IsNullOrEmpty(token) || isBad)
+        if (!String.IsNullOrEmpty(token) && !isBad)
         {
-            var tokenRequest = FetchToken(serviceUrl);
-            _inflightTokens[serviceUrl] = tokenRequest;
+            return token;
         }
 
+        var tokenRequest = FetchToken(serviceUrl);
+        _inflightTokens[serviceUrl] = tokenRequest;
         try
         {
-            token = await FetchToken(serviceUrl);
+            token = await tokenRequest;
             Debug.WriteLine($"Using token {token} for {serviceUrl}");
         }
         finally
         {
             _inflightTokens.Remove(serviceUrl);
         }
+
         return token;
     }
 
