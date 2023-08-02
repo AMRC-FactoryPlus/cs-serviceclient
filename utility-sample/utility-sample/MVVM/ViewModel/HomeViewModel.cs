@@ -11,8 +11,11 @@ namespace utility_sample.MVVM.ViewModel
     {
         public RelayCommand SubmitCommand { get; set; }
 
+        private ServiceClient _serviceClient;
+
         public HomeViewModel()
         {
+            _serviceClient = new ServiceClient();
             SubmitCommand = new RelayCommand(o =>
             {
                 // Do thing?
@@ -22,10 +25,9 @@ namespace utility_sample.MVVM.ViewModel
 
         private async void DoAsync()
         {
-            var serviceClient = new ServiceClient();
-            var test = await serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
+            var test = await _serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
                 
-            MessageBox.Show(test.ToString());
+            MessageBox.Show(test.Length.ToString());
         }
     }
 }
