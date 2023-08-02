@@ -9,20 +9,20 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// </summary>
 public class FetchClass : ServiceInterface
 {
-    private Dictionary<string, UniTask<FetchResponse>> inflight;
-    private Dictionary<string, UniTask<string>> inflightTokens;
-    private Dictionary<string, string> tokens;
+    private readonly Dictionary<string, UniTask<FetchResponse>> _inflight;
+    private readonly Dictionary<string, UniTask<string>> _inflightTokens;
+    private readonly Dictionary<string, string> _tokens;
     
     /// <inheritdoc />
     public FetchClass(ServiceClient serviceClient) : base(serviceClient)
     {
-        inflight = new Dictionary<string, UniTask<FetchResponse>>();
-        inflightTokens = new Dictionary<string, UniTask<string>>();
-        tokens = new Dictionary<string, string>();
+        _inflight = new Dictionary<string, UniTask<FetchResponse>>();
+        _inflightTokens = new Dictionary<string, UniTask<string>>();
+        _tokens = new Dictionary<string, string>();
     }
 
     /// <inheritdoc />
-    public override async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, Guid? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    public override async UniTask<FetchResponse> Fetch(string url, string method = "GET", object? query = null, Guid? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         var serviceUrl = "";
         var amendedUrl = url;
@@ -33,20 +33,20 @@ public class FetchClass : ServiceInterface
         }
 
         // Don't mess with stateful requests
-        if (!isIdempotent(method, headers, body))
+        if (!IsIdempotent(method, headers, body))
         {
             return await DoFetch(amendedUrl, serviceUrl, method, query, service, body, headers, accept, contentType);
         }
 
         // If there is already a request to this URL, we can piggyback on it
-        if (inflight.TryGetValue(amendedUrl, out var currentInflight))
+        if (_inflight.TryGetValue(amendedUrl, out var currentInflight))
         {
             return await currentInflight;
         }
 
         var responseTask = DoFetch(amendedUrl, serviceUrl, method);
         // Store the task for other requests to use
-        inflight[amendedUrl] = responseTask;
+        _inflight[amendedUrl] = responseTask;
 
         FetchResponse response;
         try
@@ -56,7 +56,7 @@ public class FetchClass : ServiceInterface
         finally
         {
             // Make sure to clear the inflight task whether it is a success or failure
-             inflight.Remove(amendedUrl);
+             _inflight.Remove(amendedUrl);
         }
         
         return response;
@@ -101,12 +101,11 @@ public class FetchClass : ServiceInterface
 
     private async UniTask<string> ServiceToken(string serviceUrl, string? badToken)
     {
-        var token = "";
-        if (tokens.TryGetValue(serviceUrl, out token))
+        if (_tokens.TryGetValue(serviceUrl, out var token))
         { }
         else
         {
-            if (inflightTokens.TryGetValue(serviceUrl, out var inflightToken))
+            if (_inflightTokens.TryGetValue(serviceUrl, out var inflightToken))
             {
                 var resolvedToken = await inflightToken;
                 Console.WriteLine($"Using token {resolvedToken} for {serviceUrl}");
@@ -118,7 +117,7 @@ public class FetchClass : ServiceInterface
         if (String.IsNullOrEmpty(token) || isBad)
         {
             var tokenRequest = FetchToken(serviceUrl);
-            inflightTokens[serviceUrl] = tokenRequest;
+            _inflightTokens[serviceUrl] = tokenRequest;
         }
 
         try
@@ -128,7 +127,7 @@ public class FetchClass : ServiceInterface
         }
         finally
         {
-            inflightTokens.Remove(serviceUrl);
+            _inflightTokens.Remove(serviceUrl);
         }
         return token;
     }
@@ -144,7 +143,7 @@ public class FetchClass : ServiceInterface
         }
 
         var token = res.Content;
-        tokens[serviceUrl] = token;
+        _tokens[serviceUrl] = token;
         return token;
     }
 
@@ -154,17 +153,14 @@ public class FetchClass : ServiceInterface
         {
             // Use basic auth
             var authBytes = System.Text.Encoding.UTF8.GetBytes($"{ServiceClient.ServiceUsername}:{ServiceClient.ServicePassword}");
-            var authString = System.Convert.ToBase64String(authBytes);
+            var authString = Convert.ToBase64String(authBytes);
             var headers = AddAuthHeaders(null, "Basic", authString);
             var response = await tokenUrl.WithHeaders(headers).SendUrlEncodedAsync(new HttpMethod("POST"), null, CancellationToken.None).WaitAsync(CancellationToken.None);
 
             return new FetchResponse(response.StatusCode, await response.GetStringAsync());
         }
-        else
-        {
-            throw new Exception("Only Basic auth supported at this time. Ensure config has username and password");
-        }
-        return new FetchResponse(400, "");
+
+        throw new Exception("Only Basic auth supported at this time. Ensure config has username and password");
     }
 
     private Dictionary<string, string> AddAuthHeaders(Dictionary<string, string>? existingHeaders, string scheme,
@@ -175,7 +171,7 @@ public class FetchClass : ServiceInterface
         return localHeaders;
     }
 
-    private bool isIdempotent(string method, Dictionary<string, string>? headers, string? body)
+    private static bool IsIdempotent(string method, Dictionary<string, string>? headers, string? body)
     {
         // Only GET requests can be idempotent
         if (method != "GET")
