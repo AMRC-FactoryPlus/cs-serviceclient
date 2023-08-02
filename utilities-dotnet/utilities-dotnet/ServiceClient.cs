@@ -10,7 +10,7 @@ public class ServiceClient
     public readonly Directory Directory;
     public readonly Discovery Discovery;
     public readonly FetchClass Fetch;
-    public readonly MQTTInterface Mqtt;
+    public readonly MqttInterface Mqtt;
 
     public readonly string? ServiceUsername;
     public readonly string? ServicePassword;
@@ -31,7 +31,7 @@ public class ServiceClient
         Directory = new Directory(this);
         Discovery = new Discovery(this);
         Fetch = new FetchClass(this);
-        Mqtt = new MQTTInterface(this);
+        Mqtt = new MqttInterface(this);
 
         ServiceUsername = Environment.GetEnvironmentVariable("ServiceUsername");
         ServicePassword = Environment.GetEnvironmentVariable("ServicePassword");

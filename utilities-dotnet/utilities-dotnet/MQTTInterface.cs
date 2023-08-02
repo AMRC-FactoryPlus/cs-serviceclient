@@ -7,10 +7,10 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// <summary>
 /// The MQTT service interface
 /// </summary>
-public class MQTTInterface : ServiceInterface
+public class MqttInterface : ServiceInterface
 {
     /// <inheritdoc />
-    public MQTTInterface(ServiceClient serviceClient) : base(serviceClient)
+    public MqttInterface(ServiceClient serviceClient) : base(serviceClient)
     {
         ServiceType = ServiceTypes.MQTT;
     }
