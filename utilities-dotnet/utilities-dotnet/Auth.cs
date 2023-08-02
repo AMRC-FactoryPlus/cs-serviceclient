@@ -6,11 +6,11 @@ namespace AMRC.FactoryPlus.ServiceClient;
 
 public struct PostAceBody
 {
-    public Guid Permission;
-    public Guid Target;
-    public AceAction Action;
-    public Guid Principal;
-    public string Kerberos;
+    public readonly Guid Permission;
+    public readonly Guid Target;
+    public readonly AceAction Action;
+    public readonly Guid Principal;
+    public readonly string Kerberos;
 
     public PostAceBody(Guid permission, Guid target, AceAction action, Guid? principal = null, string kerberos = "")
     {
@@ -24,8 +24,8 @@ public struct PostAceBody
 
 public struct Address
 {
-    public string Group;
-    public string Node;
+    public readonly string Group;
+    public readonly string Node;
 
     public Address(string group, string node)
     {
@@ -36,8 +36,8 @@ public struct Address
 
 public struct PrincipalMapping
 {
-    public Guid Uuid;
-    public string Kerberos;
+    public readonly Guid Uuid;
+    public readonly string Kerberos;
     public Address? Sparkplug;
 
     public PrincipalMapping(Guid uuid, string kerberos, Address? sparkplugAddress)
@@ -50,10 +50,10 @@ public struct PrincipalMapping
 
 public struct FetchAclQuery
 {
-    public string Principal;
-    public string Permission;
+    public readonly string Principal;
+    public readonly string Permission;
     [JsonProperty("by-uuid")]
-    public bool ByUuid;
+    public readonly bool ByUuid;
 
     public FetchAclQuery(string principal, string permission, bool byUuid)
     {
@@ -65,10 +65,10 @@ public struct FetchAclQuery
 
 public struct Ace
 {
-    public Guid Permission;
-    public Guid Target;
-    public Guid Principal;
-    public string Kerberos;
+    public readonly Guid Permission;
+    public readonly Guid Target;
+    public readonly Guid Principal;
+    public readonly string Kerberos;
 
     public Ace(Guid permission, Guid target, Guid? principal = null, string kerberos = "")
     {
@@ -82,7 +82,7 @@ public struct Ace
 public struct Acl
 {
     [JsonProperty("acl")]
-    public List<Ace> AclList;
+    public readonly List<Ace> AclList;
 
     public Acl(List<Ace> aclList) => AclList = aclList;
 }
@@ -113,15 +113,15 @@ public class Auth : ServiceInterface
     public async UniTask<Func<string, string, bool, bool>> FetchAcl(string? kerberos, Guid? uuid, string permissionGroup)
     {
         var type = "kerberos";
-        var principal = "";
+        string principal = "";
         if (!string.IsNullOrEmpty(kerberos))
         {
             principal = kerberos;
         }
-        else if (uuid != Guid.Empty)
+        else if (uuid != null && uuid != Guid.Empty)
         {
             type = "uuid";
-            principal = uuid.ToString();
+            principal = uuid.ToString() ?? "";
         }
         else
         {
@@ -189,7 +189,7 @@ public class Auth : ServiceInterface
     {
         var uuid = guid != null && guid != Guid.Empty ? guid
             : !String.IsNullOrEmpty(kerberos) ? await ResolvePrincipal($"{{kerberos: {kerberos}}}")
-            : address != null ? (await ResolvePrincipalByAddress(address ?? default))[0]
+            : address != null ? (await ResolvePrincipalByAddress((Address)address))[0]
             : await ResolvePrincipal("");
 
         if (uuid == Guid.Empty)
@@ -210,7 +210,7 @@ public class Auth : ServiceInterface
         var spConfig = await ServiceClient.ConfigDb.GetConfig(UUIDs.App[AppSubcomponents.SparkplugAddress], (Guid)uuid);
         if (spConfig != null)
         {
-            ids.Sparkplug = new Address(spConfig?.GroupId, spConfig?.NodeId);
+            ids.Sparkplug = new Address(spConfig.Value.GroupId, spConfig.Value.NodeId);
         }
         
         return ids;
@@ -241,7 +241,7 @@ public class Auth : ServiceInterface
         {
             await AddPrincipal(uuid, kerberos);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await cdb.PutConfig(UUIDs.App[AppSubcomponents.Info], uuid, JsonConvert.SerializeObject(new PutConfigBody(name, true)));
             throw;
@@ -290,7 +290,7 @@ public class Auth : ServiceInterface
     {
         var cdb = ServiceClient.ConfigDb;
         var ping = await cdb.Ping();
-        if (String.IsNullOrEmpty(ping?.Version) || !SemVersion.Parse(ping?.Version).Satisfies(">=1.7 || =1.7.0-bmz"))
+        if (String.IsNullOrEmpty(ping?.Version) || !SemVersion.Parse(ping.Value.Version, SemVersionStyles.Strict).Satisfies(">=1.7 || =1.7.0-bmz"))
         {
             Console.WriteLine($"ConfigDB is too old to search for addresses ({ping?.Version})");
             return new[] { Guid.Empty };
