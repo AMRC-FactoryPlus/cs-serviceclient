@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Flurl.Http;
+using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
@@ -29,6 +30,13 @@ public struct FetchResponse
     public string Content { get; }
 }
 
+public struct PingResponse
+{
+    public readonly string Version;
+
+    public PingResponse(string version) => Version = version;
+}
+
 /// <summary>
 /// A base class for the different services within the stack
 /// </summary>
@@ -37,11 +45,11 @@ public class ServiceInterface
     /// <summary>
     /// A reference to the ServiceClient that has been created
     /// </summary>
-    internal ServiceClient _serviceClient;
+    internal readonly ServiceClient ServiceClient;
     /// <summary>
     /// The ServiceType that this service is
     /// </summary>
-    internal ServiceTypes _serviceType;
+    internal ServiceTypes ServiceType;
     
     /// <summary>
     /// Creates a ServiceInterface object
@@ -49,7 +57,7 @@ public class ServiceInterface
     /// <param name="serviceClient">The ServiceClient that this interface will talk to</param>
     public ServiceInterface(ServiceClient serviceClient)
     {
-        _serviceClient = serviceClient;
+        ServiceClient = serviceClient;
     }
 
     /// <summary>
@@ -64,7 +72,7 @@ public class ServiceInterface
     /// <param name="accept">The format to accept back</param>
     /// <param name="contentType">The type of content being sent</param>
     /// <returns>A FetchResponse object</returns>
-    public virtual async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    public virtual async UniTask<FetchResponse> Fetch(string url, string method = "GET", object? query = null, Guid? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
         if (!String.IsNullOrWhiteSpace(body))
@@ -72,24 +80,23 @@ public class ServiceInterface
             localHeaders["Content-Type"] = contentType ?? "application/json";
         }
 
-        var response = await url.WithHeaders(localHeaders).SetQueryParams(query).SendUrlEncodedAsync(new HttpMethod(method), body, CancellationToken.None).WaitAsync(CancellationToken.None);
-        
-        return new FetchResponse(response.StatusCode, await response.GetStringAsync());
+        var res = await ServiceClient.Fetch.Fetch(url, method, query, UUIDs.Service[ServiceType], body, localHeaders, accept, contentType);
+        return new FetchResponse(res.Status, res.Content);
     }
 
     /// <summary>
     /// Attempts to ping the stack
     /// </summary>
     /// <returns>A string of information</returns>
-    public async UniTask<string> Ping()
+    public async UniTask<PingResponse?> Ping()
     {
-        var response = await Fetch("/ping", "GET");
+        var response = await Fetch("/ping");
 
         if (response.Status != 200)
         {
             return null;
         }
 
-        return response.Content;
+        return JsonConvert.DeserializeObject<PingResponse>(response.Content);
     }
 }

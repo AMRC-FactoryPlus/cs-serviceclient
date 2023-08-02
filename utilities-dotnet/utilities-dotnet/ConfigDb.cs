@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
@@ -8,13 +9,39 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// </summary>
 public struct PutConfigBody
 {
-    public string name;
-    public bool? deleted;
+    [JsonProperty("name")]
+    public string Name;
+    [JsonProperty("deleted")]
+    public bool? Deleted;
 
     public PutConfigBody(string name, bool? deleted = null)
     {
-        this.name = name;
-        this.deleted = deleted;
+        Name = name;
+        Deleted = deleted;
+    }
+}
+
+public struct ObjectRegistration
+{
+    public Guid Uuid;
+    public Guid Class;
+
+    public ObjectRegistration(Guid uuid, Guid @class)
+    {
+        Uuid = uuid;
+        Class = @class;
+    }
+}
+
+public struct PrinicpalConfig
+{
+    public string GroupId;
+    public string NodeId;
+
+    public PrinicpalConfig(string groupId, string nodeId)
+    {
+        GroupId = groupId;
+        NodeId = nodeId;
     }
 }
 
@@ -26,45 +53,96 @@ public class ConfigDb : ServiceInterface
     /// <inheritdoc />
     public ConfigDb(ServiceClient serviceClient) : base(serviceClient)
     {
-        _serviceType = ServiceTypes.ConfigDB;
+        ServiceType = ServiceTypes.ConfigDB;
     }
     
-    public async UniTask<string> GetConfig(string app, string obj)
+    public async UniTask<PrinicpalConfig?> GetConfig(Guid app, Guid obj)
     {
-        // TODO: Complete method
-        return "";
+        var res = await Fetch($"/v1/app/{app}/object/{obj}");
+
+        if (res.Status == 404)
+        {
+            return null;
+        }
+
+        if (res.Status != 200)
+        {
+            throw new Exception($"{res.Status}: Can't get {app} for {obj}");
+        }
+        
+        return JsonConvert.DeserializeObject<PrinicpalConfig>(res.Content);
     }
 
-    public async UniTask PutConfig(string app, string obj, string json)
+    public async UniTask PutConfig(Guid app, Guid obj, string json)
     {
-        // TODO: Complete method
+        var res = await Fetch($"/v1/app/{app}/object/{obj}", "PUT", null, null, json);
+        if (res.Status == 204)
+        {
+            return;
+        }
+
+        throw new Exception($"{res.Status}: Can't set {app} for {obj}");
     }
 
-    public async UniTask DeleteConfig(string app, string obj)
+    public async UniTask DeleteConfig(Guid app, Guid obj)
     {
-        // TODO: Complete method
+        var res = await Fetch($"/v1/app/{app}/object/{obj}", "DELETE");
+        if (res.Status == 204)
+        {
+            return;
+        }
+
+        throw new Exception($"{res.Status}: Can't remove {app} for {obj}");
     }
 
-    public async UniTask PatchConfig(string app, string obj, string type, string patch)
+    public async UniTask PatchConfig(Guid app, Guid obj, string type, string patch)
     {
         if (type != "merge") throw new Exception("Only merge-patch supported");
+        
+        var res = await Fetch($"/v1/app/{app}/object/{obj}", "PATCH", null, null, patch, null, null, "application/merge-patch+json");
+        if (res.Status == 204)
+        {
+            return;
+        }
 
-        // TODO: Complete method
+        throw new Exception($"{res.Status}: Can't patch {app} for {obj}");
     }
 
-    public async UniTask<Guid> CreateObject(string klass, Guid? objUUIDNullable = null, bool exclusive = false)
+    public async UniTask<Guid> CreateObject(Guid klass, Guid? objUuidNullable = null, bool exclusive = false)
     {
-        Guid objUUID = objUUIDNullable ?? Guid.Empty;
-        // TODO: Complete method
-        return Guid.Empty;
+        Guid objUuid = objUuidNullable ?? Guid.Empty;
+        var res = await Fetch("/v1/object", "POST", null, null, JsonConvert.SerializeObject(new ObjectRegistration(objUuid, klass)));
+        if (res.Status == 200 && exclusive)
+        {
+            throw new Exception($"Exclusive create of {objUuidNullable} failed");
+        }
+
+        if (res.Status == 201 || res.Status == 200)
+        {
+            return JsonConvert.DeserializeObject<ObjectRegistration>(res.Content).Uuid;
+        }
+
+        if (objUuidNullable != null)
+        {
+            throw new Exception($"{res.Status}: Creating {objUuidNullable} failed");
+        }
+
+        throw new Exception($"{res.Status}: Creating new {klass} failed");
     }
 
-    public async UniTask DeleteObject(Guid objUUID)
+    public async UniTask DeleteObject(Guid objUuid)
     {
-        // TODO: Complete method
+        var res = await Fetch($"/v1/object/{objUuid}", "DELETE");
+        
+        if (res.Status == 204)
+        {
+            return;
+        }
+
+        throw new Exception($"{res.Status}: Deleting {objUuid} failed");
     }
 
-    public async UniTask<Guid[]?> Search(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
+    public async UniTask<Guid[]?> Search(Guid app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass = "")
     {
         var qs = query
                       .Select(q => new KeyValuePair<string, string>(q.Key, JsonConvert.SerializeObject(q.Value)))
@@ -76,11 +154,11 @@ public class ConfigDb : ServiceInterface
                       .Concat(localResults)
                       .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        var response = await _serviceClient.Fetch.Fetch($"/v1/app/{app}{klass}/search", "GET", queries, ServiceTypes.ConfigDB);
+        var response = await ServiceClient.Fetch.Fetch($"/v1/app/{app}{klass ?? ""}/search", "GET", queries, UUIDs.Service[ServiceTypes.ConfigDB]);
 
         if (response.Status != 200)
         {
-            Console.WriteLine($"ConfigDB - Search failed: {response.Status}");
+            Debug.WriteLine($"ConfigDB - Search failed: {response.Status}");
 
             return null;
         }
@@ -89,7 +167,7 @@ public class ConfigDb : ServiceInterface
         return uuids;
     }
 
-    public async UniTask<Guid> Resolve(string app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
+    public async UniTask<Guid> Resolve(Guid app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass)
     {
         var uuids = await Search(app, query, new Dictionary<string, string>(), klass);
 
