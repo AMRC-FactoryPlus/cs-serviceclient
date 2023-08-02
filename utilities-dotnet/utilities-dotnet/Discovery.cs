@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
 
 namespace AMRC.FactoryPlus.ServiceClient;
 
@@ -28,7 +29,7 @@ public class Discovery : ServiceInterface
                 continue;
             }
 
-            Console.WriteLine($"Preset URL for {preset.Key}: {preset.Value}");
+            Debug.WriteLine($"Preset URL for {preset.Key}: {preset.Value}");
             SetServiceUrl(preset.Key, preset.Value);
         }
     }
@@ -61,7 +62,7 @@ public class Discovery : ServiceInterface
     {
         if (_urls.TryGetValue(service, out var url))
         {
-            Console.WriteLine($"[{service}]Found {url} preconfigured");
+            Debug.WriteLine($"[{service}]Found {url} preconfigured");
             return new[] {url};
         }
         
@@ -69,7 +70,7 @@ public class Discovery : ServiceInterface
 
         if (urls is {Length: > 0})
         {
-            Console.WriteLine($"[{service}] Discover returned {String.Join(", ", urls)}");
+            Debug.WriteLine($"[{service}] Discover returned {String.Join(", ", urls)}");
             return urls;
         }
         

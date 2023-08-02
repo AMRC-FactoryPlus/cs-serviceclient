@@ -1,8 +1,22 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
+using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
+
+public struct TokenStruct
+{
+    public string Token;
+    public string Expiry;
+
+    public TokenStruct(string token, string expiry)
+    {
+        Token = token;
+        Expiry = expiry;
+    }
+}
 
 /// <summary>
 /// The Fetch service interface
@@ -29,7 +43,7 @@ public class FetchClass : ServiceInterface
         if (service != null)
         {
             serviceUrl = await ServiceClient.Discovery.ServiceUrl((Guid)service) ?? "";
-            amendedUrl = url.AppendPathSegment(serviceUrl);
+            amendedUrl = serviceUrl.AppendPathSegment(url);
         }
 
         // Don't mess with stateful requests
@@ -84,7 +98,7 @@ public class FetchClass : ServiceInterface
 
             var response = await url.WithHeaders(localHeaders)
                                     .SetQueryParams(query)
-                                    .SendUrlEncodedAsync(new HttpMethod(method), body, CancellationToken.None)
+                                    .SendAsync(new HttpMethod(method), new StringContent(body ?? ""), CancellationToken.None)
                                     .WaitAsync(CancellationToken.None);
 
             return new FetchResponse(response.StatusCode, await response.GetStringAsync());
@@ -108,7 +122,7 @@ public class FetchClass : ServiceInterface
             if (_inflightTokens.TryGetValue(serviceUrl, out var inflightToken))
             {
                 var resolvedToken = await inflightToken;
-                Console.WriteLine($"Using token {resolvedToken} for {serviceUrl}");
+                Debug.WriteLine($"Using token {resolvedToken} for {serviceUrl}");
                 return resolvedToken;
             }
         }
@@ -123,7 +137,7 @@ public class FetchClass : ServiceInterface
         try
         {
             token = await FetchToken(serviceUrl);
-            Console.WriteLine($"Using token {token} for {serviceUrl}");
+            Debug.WriteLine($"Using token {token} for {serviceUrl}");
         }
         finally
         {
@@ -134,7 +148,7 @@ public class FetchClass : ServiceInterface
 
     private async UniTask<string> FetchToken(string serviceUrl)
     {
-        var tokenUrl = $"/token/{serviceUrl}";
+        var tokenUrl = serviceUrl.AppendPathSegment("token");
         var res = await GssFetch(tokenUrl);
 
         if (res.Status != 200)
@@ -142,9 +156,9 @@ public class FetchClass : ServiceInterface
             throw new Exception($"Token fetch failed for {serviceUrl}");
         }
 
-        var token = res.Content;
-        _tokens[serviceUrl] = token;
-        return token;
+        var token = JsonConvert.DeserializeObject<TokenStruct>(res.Content);
+        _tokens[serviceUrl] = token.Token;
+        return token.Token;
     }
 
     private async UniTask<FetchResponse> GssFetch(string tokenUrl)
@@ -155,7 +169,7 @@ public class FetchClass : ServiceInterface
             var authBytes = System.Text.Encoding.UTF8.GetBytes($"{ServiceClient.ServiceUsername}:{ServiceClient.ServicePassword}");
             var authString = Convert.ToBase64String(authBytes);
             var headers = AddAuthHeaders(null, "Basic", authString);
-            var response = await tokenUrl.WithHeaders(headers).SendUrlEncodedAsync(new HttpMethod("POST"), null, CancellationToken.None).WaitAsync(CancellationToken.None);
+            var response = await tokenUrl.WithHeaders(headers).PostAsync(null, CancellationToken.None).WaitAsync(CancellationToken.None);
 
             return new FetchResponse(response.StatusCode, await response.GetStringAsync());
         }

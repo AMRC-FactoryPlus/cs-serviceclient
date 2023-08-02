@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
@@ -44,7 +45,7 @@ public class Directory : ServiceInterface
 
         if (res.Status == 404)
         {
-            Console.WriteLine($"{res.Status}: Can't find service {service}");
+            Debug.WriteLine($"{res.Status}: Can't find service {service}");
             return new string[]{};
         }
 
@@ -53,8 +54,8 @@ public class Directory : ServiceInterface
             throw new Exception($"{res.Status}: Can't get service records for {service}");
         }
 
-        var specs = JsonConvert.DeserializeObject<ServiceProviderList>(res.Content);
-        return specs.List.Select(s => s.Url).Where(s => !String.IsNullOrEmpty(s)).ToArray();
+        var specs = JsonConvert.DeserializeObject<List<ServiceProvider>>(res.Content);
+        return specs.Select(s => s.Url).Where(s => !String.IsNullOrEmpty(s)).ToArray();
     }
 
     public async void RegisterServiceUrl(string service, string url)
@@ -66,6 +67,6 @@ public class Directory : ServiceInterface
             throw new Exception($"{res.Status}: Can't register service {service}");
         }
 
-        Console.WriteLine($"Registered {url} for {service}");
+        Debug.WriteLine($"Registered {url} for {service}");
     }
 }

@@ -80,9 +80,8 @@ public class ServiceInterface
             localHeaders["Content-Type"] = contentType ?? "application/json";
         }
 
-        var response = await url.WithHeaders(localHeaders).SetQueryParams(query).SendUrlEncodedAsync(new HttpMethod(method), body, CancellationToken.None).WaitAsync(CancellationToken.None);
-        
-        return new FetchResponse(response.StatusCode, await response.GetStringAsync());
+        var res = await ServiceClient.Fetch.Fetch(url, method, query, UUIDs.Service[ServiceType], body, localHeaders, accept, contentType);
+        return new FetchResponse(res.Status, res.Content);
     }
 
     /// <summary>

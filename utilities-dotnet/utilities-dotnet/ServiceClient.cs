@@ -26,13 +26,6 @@ public class ServiceClient
     /// </summary>
     public ServiceClient()
     {
-        Auth = new Auth(this);
-        ConfigDb = new ConfigDb(this);
-        Directory = new Directory(this);
-        Discovery = new Discovery(this);
-        Fetch = new FetchClass(this);
-        Mqtt = new MqttInterface(this);
-
         ServiceUsername = Environment.GetEnvironmentVariable("ServiceUsername");
         ServicePassword = Environment.GetEnvironmentVariable("ServicePassword");
         RootPrincipal = Environment.GetEnvironmentVariable("RootPrincipal");
@@ -41,5 +34,12 @@ public class ServiceClient
         ConfigDbUrl = Environment.GetEnvironmentVariable("ConfigDbUrl");
         DirectoryUrl = Environment.GetEnvironmentVariable("DirectoryUrl");
         MqttUrl = Environment.GetEnvironmentVariable("MqttUrl");
+        
+        Auth = new Auth(this);
+        ConfigDb = new ConfigDb(this);
+        Directory = new Directory(this);
+        Discovery = new Discovery(this);
+        Fetch = new FetchClass(this);
+        Mqtt = new MqttInterface(this);
     }
 }

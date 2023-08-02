@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics;
+using System.Runtime.Serialization;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using Semver;
@@ -133,7 +134,7 @@ public class Auth : ServiceInterface
 
         if (String.IsNullOrEmpty(type))
         {
-            Console.WriteLine($"Unrecognised principal request: {kerberos}, {uuid}");
+            Debug.WriteLine($"Unrecognised principal request: {kerberos}, {uuid}");
             return (s1, s2, b1) => false;
         }
 
@@ -154,7 +155,7 @@ public class Auth : ServiceInterface
 
         if (res.Status != 200)
         {
-            Console.WriteLine($"{res.Status}: Failed to read ACL for {principal}");
+            Debug.WriteLine($"{res.Status}: Failed to read ACL for {principal}");
             return (s1, s2, b1) => false;
         }
 
@@ -179,12 +180,12 @@ public class Auth : ServiceInterface
 
         if (res.Status != 200)
         {
-            Console.WriteLine($"{res.Status}: Failed to resolve {query}");
+            Debug.WriteLine($"{res.Status}: Failed to resolve {query}");
             return Guid.Empty;
         }
 
         var uuid = new Guid(res.Content);
-        Console.WriteLine($"{res.Status}: Resolved {query} to {uuid}");
+        Debug.WriteLine($"{res.Status}: Resolved {query} to {uuid}");
         return uuid;
     }
 
@@ -204,7 +205,7 @@ public class Auth : ServiceInterface
 
         if (res.Status != 200)
         {
-            Console.WriteLine($"{res.Status}: Failed to fetch principal {uuid}");
+            Debug.WriteLine($"{res.Status}: Failed to fetch principal {uuid}");
             return null;
         }
 
@@ -295,7 +296,7 @@ public class Auth : ServiceInterface
         var ping = await cdb.Ping();
         if (String.IsNullOrEmpty(ping?.Version) || !SemVersion.Parse(ping.Value.Version, SemVersionStyles.Strict).Satisfies(">=1.7 || =1.7.0-bmz"))
         {
-            Console.WriteLine($"ConfigDB is too old to search for addresses ({ping?.Version})");
+            Debug.WriteLine($"ConfigDB is too old to search for addresses ({ping?.Version})");
             return new[] { Guid.Empty };
         }
 
@@ -311,7 +312,7 @@ public class Auth : ServiceInterface
 
         if (uuids is {Length: > 1})
         {
-            Console.WriteLine($"Multiple results resolving Sparkplug address {address}");
+            Debug.WriteLine($"Multiple results resolving Sparkplug address {address}");
         }
         
         return new[] { Guid.Empty };

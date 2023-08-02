@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
@@ -157,7 +158,7 @@ public class ConfigDb : ServiceInterface
 
         if (response.Status != 200)
         {
-            Console.WriteLine($"ConfigDB - Search failed: {response.Status}");
+            Debug.WriteLine($"ConfigDB - Search failed: {response.Status}");
 
             return null;
         }
