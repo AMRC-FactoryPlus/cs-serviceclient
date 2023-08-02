@@ -8,13 +8,12 @@ namespace AMRC.FactoryPlus.ServiceClient;
 public class Discovery : ServiceInterface
 {
     private readonly Dictionary<Guid, string> _urls;
-    private readonly Dictionary<Guid, string?> _presets;
 
     /// <inheritdoc />
     public Discovery(ServiceClient serviceClient) : base(serviceClient)
     {
         _urls = new Dictionary<Guid, string>();
-        _presets = new Dictionary<Guid, string?>
+        Dictionary<Guid, string?> presets = new()
         {
             {UUIDs.Service[ServiceTypes.Authentication], ServiceClient.AuthnUrl},
             {UUIDs.Service[ServiceTypes.ConfigDB], ServiceClient.ConfigDbUrl},
@@ -22,7 +21,7 @@ public class Discovery : ServiceInterface
             {UUIDs.Service[ServiceTypes.MQTT], ServiceClient.MqttUrl}
         };
 
-        foreach (var preset in _presets)
+        foreach (var preset in presets)
         {
             if (String.IsNullOrEmpty(preset.Value))
             {

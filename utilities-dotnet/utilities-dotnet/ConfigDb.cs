@@ -8,13 +8,15 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// </summary>
 public struct PutConfigBody
 {
-    public string name;
-    public bool? deleted;
+    [JsonProperty("name")]
+    public string Name;
+    [JsonProperty("deleted")]
+    public bool? Deleted;
 
     public PutConfigBody(string name, bool? deleted = null)
     {
-        this.name = name;
-        this.deleted = deleted;
+        Name = name;
+        Deleted = deleted;
     }
 }
 
@@ -105,13 +107,13 @@ public class ConfigDb : ServiceInterface
         throw new Exception($"{res.Status}: Can't patch {app} for {obj}");
     }
 
-    public async UniTask<Guid> CreateObject(Guid klass, Guid? objUUIDNullable = null, bool exclusive = false)
+    public async UniTask<Guid> CreateObject(Guid klass, Guid? objUuidNullable = null, bool exclusive = false)
     {
-        Guid objUUID = objUUIDNullable ?? Guid.Empty;
-        var res = await Fetch("/v1/object", "POST", null, null, JsonConvert.SerializeObject(new ObjectRegistration(objUUID, klass)));
+        Guid objUuid = objUuidNullable ?? Guid.Empty;
+        var res = await Fetch("/v1/object", "POST", null, null, JsonConvert.SerializeObject(new ObjectRegistration(objUuid, klass)));
         if (res.Status == 200 && exclusive)
         {
-            throw new Exception($"Exclusive create of {objUUIDNullable} failed");
+            throw new Exception($"Exclusive create of {objUuidNullable} failed");
         }
 
         if (res.Status == 201 || res.Status == 200)
@@ -119,27 +121,27 @@ public class ConfigDb : ServiceInterface
             return JsonConvert.DeserializeObject<ObjectRegistration>(res.Content).Uuid;
         }
 
-        if (objUUIDNullable != null)
+        if (objUuidNullable != null)
         {
-            throw new Exception($"{res.Status}: Creating {objUUIDNullable} failed");
+            throw new Exception($"{res.Status}: Creating {objUuidNullable} failed");
         }
 
         throw new Exception($"{res.Status}: Creating new {klass} failed");
     }
 
-    public async UniTask DeleteObject(Guid objUUID)
+    public async UniTask DeleteObject(Guid objUuid)
     {
-        var res = await Fetch($"/v1/object/{objUUID}", "DELETE");
+        var res = await Fetch($"/v1/object/{objUuid}", "DELETE");
         
         if (res.Status == 204)
         {
             return;
         }
 
-        throw new Exception($"{res.Status}: Deleting {objUUID} failed");
+        throw new Exception($"{res.Status}: Deleting {objUuid} failed");
     }
 
-    public async UniTask<Guid[]?> Search(Guid app, Dictionary<string, object> query, Dictionary<string, string> results, string klass = "")
+    public async UniTask<Guid[]?> Search(Guid app, Dictionary<string, object> query, Dictionary<string, string> results, string? klass = "")
     {
         var qs = query
                       .Select(q => new KeyValuePair<string, string>(q.Key, JsonConvert.SerializeObject(q.Value)))
@@ -151,7 +153,7 @@ public class ConfigDb : ServiceInterface
                       .Concat(localResults)
                       .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        var response = await ServiceClient.Fetch.Fetch($"/v1/app/{app}{klass}/search", "GET", queries, UUIDs.Service[ServiceTypes.ConfigDB]);
+        var response = await ServiceClient.Fetch.Fetch($"/v1/app/{app}{klass ?? ""}/search", "GET", queries, UUIDs.Service[ServiceTypes.ConfigDB]);
 
         if (response.Status != 200)
         {
