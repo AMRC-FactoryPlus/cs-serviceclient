@@ -72,7 +72,7 @@ public class ServiceInterface
     /// <param name="accept">The format to accept back</param>
     /// <param name="contentType">The type of content being sent</param>
     /// <returns>A FetchResponse object</returns>
-    public virtual async UniTask<FetchResponse> Fetch(string url, string method = "GET", object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    public virtual async UniTask<FetchResponse> Fetch(string url, string method = "GET", object? query = null, Guid? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         var localHeaders = new Dictionary<string, string>(headers ?? new Dictionary<string, string>()) {["Accept"] = accept ?? "application/json"};
         if (!String.IsNullOrWhiteSpace(body))

@@ -22,13 +22,13 @@ public class FetchClass : ServiceInterface
     }
 
     /// <inheritdoc />
-    public override async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    public override async UniTask<FetchResponse> Fetch(string url, string method, object? query = null, Guid? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         var serviceUrl = "";
         var amendedUrl = url;
         if (service != null)
         {
-            serviceUrl = await _serviceClient.Discovery.ServiceUrl((ServiceTypes)service) ?? "";
+            serviceUrl = await _serviceClient.Discovery.ServiceUrl((Guid)service) ?? "";
             amendedUrl = url.AppendPathSegment(serviceUrl);
         }
 
@@ -62,7 +62,7 @@ public class FetchClass : ServiceInterface
         return response;
     }
 
-    private async UniTask<FetchResponse> DoFetch(string url, string serviceUrl, string method, object? query = null, ServiceTypes? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
+    private async UniTask<FetchResponse> DoFetch(string url, string serviceUrl, string method, object? query = null, Guid? service = null, string? body = null, Dictionary<string, string>? headers = null, string? accept = null, string? contentType = null)
     {
         var token = "";
 

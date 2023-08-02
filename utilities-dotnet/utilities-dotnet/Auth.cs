@@ -147,7 +147,7 @@ public class Auth : ServiceInterface
             "/authz/acl",
             "GET",
             new FetchAclQuery(principal, permissionGroup, isUuid),
-            ServiceTypes.Authentication);
+            UUIDs.Service[ServiceTypes.Authentication]);
 
         if (res.Status != 200)
         {
@@ -171,7 +171,7 @@ public class Auth : ServiceInterface
             "/authz/principal/find",
             "GET", 
             query, 
-            ServiceTypes.Authentication
+            UUIDs.Service[ServiceTypes.Authentication]
             );
 
         if (res.Status != 200)
@@ -207,7 +207,7 @@ public class Auth : ServiceInterface
 
         var ids = JsonConvert.DeserializeObject<PrincipalMapping>(res.Content);
         
-        var spConfig = await _serviceClient.ConfigDb.GetConfig(UUIDs.App[AppSubcomponents.SparkplugAddress], uuid.ToString());
+        var spConfig = await _serviceClient.ConfigDb.GetConfig(UUIDs.App[AppSubcomponents.SparkplugAddress], (Guid)uuid);
         if (spConfig != null)
         {
             ids.Sparkplug = new Address(spConfig?.GroupId, spConfig?.NodeId);
@@ -243,13 +243,13 @@ public class Auth : ServiceInterface
         }
         catch (Exception e)
         {
-            await cdb.PutConfig(UUIDs.App[AppSubcomponents.Info], uuid.ToString(), JsonConvert.SerializeObject(new PutConfigBody(name, true)));
+            await cdb.PutConfig(UUIDs.App[AppSubcomponents.Info], uuid, JsonConvert.SerializeObject(new PutConfigBody(name, true)));
             throw;
         }
 
         if (!String.IsNullOrEmpty(name))
         {
-            await cdb.PutConfig(UUIDs.App[AppSubcomponents.Info], uuid.ToString(),
+            await cdb.PutConfig(UUIDs.App[AppSubcomponents.Info], uuid,
                 JsonConvert.SerializeObject(new PutConfigBody(name)));
         }
 

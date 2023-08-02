@@ -16,7 +16,10 @@ public class ServiceClient
     public string? ServicePassword;
     public string? RootPrincipal;
     public string? PermissionGroup;
+    public string? AuthnUrl;
+    public string? ConfigDbUrl;
     public string? DirectoryUrl;
+    public string? MqttUrl;
 
     /// <summary>
     /// Creates a ServiceClient that allows for interaction with F+ services
