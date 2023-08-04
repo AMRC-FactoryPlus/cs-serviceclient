@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using utility_sample.Core;
+using utility_sample.MVVM.Model;
 
 namespace utility_sample.MVVM.ViewModel
 {
@@ -12,6 +13,11 @@ namespace utility_sample.MVVM.ViewModel
         /// Command to save settings
         /// </summary>
         public RelayCommand SaveCommand { get; set; }
+        
+        /// <summary>
+        /// Communicator for doing factory plus functions
+        /// </summary>
+        public FPlusCommunicator FPlusCommunicator { get; set; }
 
         /// <summary>
         /// Constructor for making an instance of the settings view
@@ -20,7 +26,8 @@ namespace utility_sample.MVVM.ViewModel
         {
             SaveCommand = new RelayCommand(o =>
             {
-                // Do thing?
+                // TODO: Attempt to load saved variables
+                // TODO: Make F plus communicator
             });
         }
     }
