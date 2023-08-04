@@ -7,12 +7,21 @@ using utility_sample.Core;
 
 namespace utility_sample.MVVM.ViewModel
 {
+    /// <summary>
+    /// Handles viewmodel for the default home view
+    /// </summary>
     public class HomeViewModel: ObservableObject
     {
+        /// <summary>
+        /// TODO: implement command
+        /// </summary>
         public RelayCommand SubmitCommand { get; set; }
 
         private ServiceClient _serviceClient;
 
+        /// <summary>
+        /// Constructor for making an instance of the settings view model
+        /// </summary>
         public HomeViewModel()
         {
             _serviceClient = new ServiceClient();
