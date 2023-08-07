@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
 using utility_sample.Core;
 using utility_sample.MVVM.Model;
 
@@ -13,21 +13,24 @@ namespace utility_sample.MVVM.ViewModel
         /// Command to save settings
         /// </summary>
         public RelayCommand SaveCommand { get; set; }
-        
-        /// <summary>
-        /// Communicator for doing factory plus functions
-        /// </summary>
-        public FPlusCommunicator FPlusCommunicator { get; set; }
 
+        private FPlusCommunicator _fPlusCommunicator;
+        
         /// <summary>
         /// Constructor for making an instance of the settings view
         /// </summary>
         public SettingsViewModel()
         {
+            // TODO: Load saved variables if found
+            _fPlusCommunicator = FPlusCommunicator.GetInstance();
+            _fPlusCommunicator.TestString = "Hello from Settings View";
+            Debug.Print(_fPlusCommunicator.TestString);
+            
             SaveCommand = new RelayCommand(o =>
             {
-                // TODO: Attempt to load saved variables
-                // TODO: Make F plus communicator
+                // TODO: Attempt to save variables
+                _fPlusCommunicator.TestString = "Hello from Save button";
+                Debug.Print(_fPlusCommunicator.TestString);
             });
         }
     }

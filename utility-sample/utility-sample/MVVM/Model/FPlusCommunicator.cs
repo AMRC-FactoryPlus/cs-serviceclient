@@ -1,10 +1,17 @@
-﻿namespace utility_sample.MVVM.Model
+﻿using System.Collections.Generic;
+using AMRC.FactoryPlus.ServiceClient;
+
+namespace utility_sample.MVVM.Model
 {
     /// <summary>
     /// Handles getting and putting of data from Factory+
     /// </summary>
     public class FPlusCommunicator
     {
+        private static FPlusCommunicator _instance;
+        
+        public string TestString;
+        
         private string _serviceUsername;
         private string _rootPrincipal;
         private string _permissionGroup;
@@ -12,6 +19,8 @@
         private string _configDbUrl;
         private string _directoryUrl;
         private string _mqttUrl;
+
+        private ServiceClient _serviceClient;
 
         /// <summary>
         /// TODO
@@ -33,6 +42,29 @@
             _configDbUrl = configDbUrl;
             _directoryUrl = directoryUrl;
             _mqttUrl = mqttUrl;
+
+            //_serviceClient = new ServiceClient();
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <returns></returns>
+        public static FPlusCommunicator GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new FPlusCommunicator("","","","","","","");
+            }
+            return _instance;
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public async void DoTest()
+        {
+            var test = await _serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
         }
     }
 }

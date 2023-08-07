@@ -4,6 +4,7 @@ using System.Windows;
 using AMRC.FactoryPlus;
 using AMRC.FactoryPlus.ServiceClient;
 using utility_sample.Core;
+using utility_sample.MVVM.Model;
 
 namespace utility_sample.MVVM.ViewModel
 {
@@ -17,26 +18,20 @@ namespace utility_sample.MVVM.ViewModel
         /// </summary>
         public RelayCommand SubmitCommand { get; set; }
 
-        private ServiceClient _serviceClient;
-
+        private FPlusCommunicator _fPlusCommunicator;
+        
         /// <summary>
         /// Constructor for making an instance of the settings view model
         /// </summary>
         public HomeViewModel()
         {
-            _serviceClient = new ServiceClient();
+            _fPlusCommunicator = FPlusCommunicator.GetInstance();
+            
             SubmitCommand = new RelayCommand(o =>
             {
-                // Do thing?
-                DoAsync();
+                // TODO: Submit F+ Request
+                MessageBox.Show(_fPlusCommunicator.TestString);
             });
-        }
-
-        private async void DoAsync()
-        {
-            var test = await _serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
-                
-            MessageBox.Show(test.Length.ToString());
         }
     }
 }

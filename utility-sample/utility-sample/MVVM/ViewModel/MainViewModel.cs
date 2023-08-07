@@ -1,5 +1,6 @@
 ﻿using System;
 using utility_sample.Core;
+using utility_sample.MVVM.Model;
 
 namespace utility_sample.MVVM.ViewModel
 {
@@ -24,6 +25,11 @@ namespace utility_sample.MVVM.ViewModel
         /// The settings view viewmodel
         /// </summary>
         public SettingsViewModel SettingsVM { get; set; }
+        
+        /// <summary>
+        /// Factory Plus communicator instance to be passed around to other views
+        /// </summary>
+        public FPlusCommunicator FPlusCommunicator { get; set; }
 
         private object _currentView;
 
@@ -45,6 +51,8 @@ namespace utility_sample.MVVM.ViewModel
         /// </summary>
         public MainViewModel()
         {
+            FPlusCommunicator = new FPlusCommunicator("","","","","","","");
+            
             HomeVM = new HomeViewModel();
             SettingsVM = new SettingsViewModel();
             
