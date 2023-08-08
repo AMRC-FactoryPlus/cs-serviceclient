@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Configuration;
+using System.Diagnostics;
 using utility_sample.Core;
 using utility_sample.MVVM.Model;
 
@@ -26,22 +27,30 @@ namespace utility_sample.MVVM.ViewModel
         /// </summary>
         public SettingsViewModel()
         {
+            // Better practice might be to bind directly to the ConfigManager Settings from the view
+            
             // TODO: Load saved variables if found
+            LoadSettings();
+            
             _fPlusCommunicator = FPlusCommunicator.GetInstance();
-            _fPlusCommunicator.TestString = "Hello from Settings View";
             Debug.Print(_fPlusCommunicator.TestString);
             
             SaveCommand = new RelayCommand(o =>
             {
                 // TODO: Attempt to save variables
-                _fPlusCommunicator.TestString = "Hello from Save button";
                 Debug.Print(_fPlusCommunicator.TestString);
             });
         }
 
         private void LoadSettings()
         {
-            
+            ServiceUsername = ConfigurationManager.AppSettings.Get("ServiceUsername") ?? string.Empty;
+            RootPrincipal = ConfigurationManager.AppSettings.Get("RootPrincipal") ?? string.Empty;
+            PermissionGroup = ConfigurationManager.AppSettings.Get("PermissionGroup") ?? string.Empty;
+            AuthnUrl = ConfigurationManager.AppSettings.Get("AuthnUrl") ?? string.Empty;
+            ConfigDbUrl = ConfigurationManager.AppSettings.Get("ConfigDbUrl") ?? string.Empty;
+            DirectoryUrl = ConfigurationManager.AppSettings.Get("DirectoryUrl") ?? string.Empty;
+            MqttUrl = ConfigurationManager.AppSettings.Get("MqttUrl") ?? string.Empty;
         }
     }
 }
