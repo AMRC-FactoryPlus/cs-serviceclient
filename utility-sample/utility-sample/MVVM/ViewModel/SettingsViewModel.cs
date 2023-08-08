@@ -9,10 +9,15 @@ namespace utility_sample.MVVM.ViewModel
     /// </summary>
     public class SettingsViewModel: ObservableObject
     {
-        /// <summary>
-        /// Command to save settings
-        /// </summary>
+        // Data bindings
         public RelayCommand SaveCommand { get; set; }
+        public string ServiceUsername { get; set; }
+        public string RootPrincipal { get; set; }
+        public string PermissionGroup { get; set; }
+        public string AuthnUrl { get; set; }
+        public string ConfigDbUrl { get; set; }
+        public string DirectoryUrl { get; set; }
+        public string MqttUrl { get; set; }
 
         private FPlusCommunicator _fPlusCommunicator;
         
@@ -32,6 +37,11 @@ namespace utility_sample.MVVM.ViewModel
                 _fPlusCommunicator.TestString = "Hello from Save button";
                 Debug.Print(_fPlusCommunicator.TestString);
             });
+        }
+
+        private void LoadSettings()
+        {
+            
         }
     }
 }
