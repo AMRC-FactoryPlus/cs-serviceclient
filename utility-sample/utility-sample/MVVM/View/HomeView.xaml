@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Username -->
@@ -71,5 +72,12 @@
                 VerticalAlignment="Center"
                 Margin="10" 
                 Command="{Binding SubmitCommand}"/>
+        
+        <!-- Stop Button -->
+        <Button Grid.Row="7" Content="Stop Factory+ Stuff" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Center"
+                Margin="10" 
+                Command="{Binding CancelCommand}"/>
     </Grid>
 </UserControl>
