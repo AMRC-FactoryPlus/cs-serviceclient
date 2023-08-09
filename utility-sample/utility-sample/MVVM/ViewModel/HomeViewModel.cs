@@ -43,15 +43,11 @@ namespace utility_sample.MVVM.ViewModel
             _serviceClient = new ServiceClient();
             // var test = await serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
             
-            // _mqttClient = await serviceClient.Mqtt.GetMqttClient("mqtt://amrcf2050mqtt.shef.ac.uk:1883");
             _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
 
             _serviceClient.Mqtt.OnMessageReceived += MessageReceived;
 
-            // "spBv1.0/AMRC-F2050-IoT_Power_Monitoring/DDATA/Soft_Gateway/F2050_Mk1_Canteen_Coffee_Machine"
-            // "rng/sample_1"
-            // "pathfindr/dog/summary/latest"
-            await _serviceClient.Mqtt.SubscribeToTopic(_mqttClient, "spBv1.0/#");
+            await _mqttClient.SubscribeAsync("spBv1.0/#");
             // MessageBox.Show(test.Length.ToString());
         }
 
@@ -68,7 +64,7 @@ namespace utility_sample.MVVM.ViewModel
 
         private async void StopFPlusStuff()
         {
-            await _serviceClient.Mqtt.UnsubscribeFromTopic(_mqttClient, "spBv1.0/#");
+            await _mqttClient.UnsubscribeAsync("spBv1.0/#");
             await _mqttClient.DisconnectAsync();
         }
     }
