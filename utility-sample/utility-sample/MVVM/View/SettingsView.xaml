@@ -30,24 +30,16 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-
-        <!-- Pair 1 -->
-        <Label Grid.Column="0" Grid.Row="0" 
-               Content="Service Username"
+        
+        <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+               Content="Persistent Variables"
                Foreground="White"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
-               Margin="10" />
-
-        <TextBox Grid.Column="1" Grid.Row="0" 
-                 Width="200" 
-                 HorizontalAlignment="Left" 
-                 Margin="10" 
-                 x:Name="InputTextBox1" 
-                 Text="{Binding Path=ServiceUsername}"/>
+               Margin="20" />
         
-        <!-- Pair 2 -->
-        <Label Grid.Column="0" Grid.Row="1" 
+        <!-- Pair 1 -->
+        <Label Grid.Column="0" Grid.Row="1"
                Content="Root Principal"
                Foreground="White"
                HorizontalAlignment="Left"
@@ -61,7 +53,7 @@
                  x:Name="InputTextBox2"
                  Text="{Binding Path=RootPrincipal}"/>
         
-        <!-- Pair 3 -->
+        <!-- Pair 2 -->
         <Label Grid.Column="0" Grid.Row="2" 
                Content="Permission Group"
                Foreground="White"
@@ -76,7 +68,7 @@
                  x:Name="InputTextBox3"
                  Text="{Binding Path=PermissionGroup}"/>
         
-        <!-- Pair 4 -->
+        <!-- Pair 3 -->
         <Label Grid.Column="0" Grid.Row="3" 
                Content="Authn Url"
                Foreground="White"
@@ -91,7 +83,7 @@
                  x:Name="InputTextBox4"
                  Text="{Binding Path=AuthnUrl}"/>
         
-        <!-- Pair 5 -->
+        <!-- Pair 4 -->
         <Label Grid.Column="0" Grid.Row="4" 
                Content="Config DB URL"
                Foreground="White"
@@ -106,7 +98,7 @@
                  x:Name="InputTextBox5"
                  Text="{Binding Path=ConfigDbUrl}"/>
         
-        <!-- Pair 6 -->
+        <!-- Pair 5 -->
         <Label Grid.Column="0" Grid.Row="5" 
                Content="Directory URL"
                Foreground="White"
@@ -121,7 +113,7 @@
                  x:Name="InputTextBox6"
                  Text="{Binding Path=DirectoryUrl}"/>
         
-        <!-- Pair 7 -->
+        <!-- Pair 6 -->
         <Label Grid.Column="0" Grid.Row="6" 
                Content="MQTT URL"
                Foreground="White"
@@ -137,7 +129,7 @@
                  Text="{Binding Path=MqttUrl}"/>
 
         <!-- Submit Button -->
-        <Button Grid.Row="8" Content="Submit" 
+        <Button Grid.Column="0" Grid.Row="8" Content="Save" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Center"
                 Margin="10" 

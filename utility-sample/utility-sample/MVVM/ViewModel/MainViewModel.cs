@@ -51,7 +51,7 @@ namespace utility_sample.MVVM.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            FPlusCommunicator = new FPlusCommunicator("","","","","","","");
+            FPlusCommunicator = new FPlusCommunicator();
             
             HomeVM = new HomeViewModel();
             SettingsVM = new SettingsViewModel();

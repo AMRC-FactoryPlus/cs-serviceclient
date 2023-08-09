@@ -18,24 +18,55 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Label -->
-        <Label Content="Label"
+        <!-- Username -->
+        <Label Content="Username"
                Foreground="White"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Margin="10" />
-
-        <!-- Input Field (TextBox) -->
         <TextBox Grid.Row="1" 
                  Width="200" 
                  HorizontalAlignment="Left" 
                  Margin="10" 
-                 x:Name="InputTextBox" />
+                 x:Name="UsernameTextBox"
+                 Text="{Binding Path=ServiceUsername}"/>
+        
+        <!-- Password -->
+        <Label Grid.Row = "2" 
+               Content="Password"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+        <TextBox Grid.Row="3" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="PasswordTextBox"
+                 Text="{Binding Path=ServicePassword}"/>
+        
+        <!-- Topic -->
+        <Label Grid.Row = "4" 
+               Content="Topic"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+        <TextBox Grid.Row="5" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="TopicTextBox"
+                 Text="Not implemented"/>
 
         <!-- Submit Button -->
-        <Button Grid.Row="2" Content="Submit" 
+        <Button Grid.Row="6" Content="Submit" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Center"
                 Margin="10" 

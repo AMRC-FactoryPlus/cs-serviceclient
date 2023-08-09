@@ -1,5 +1,7 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Diagnostics;
+using System.Windows;
 using utility_sample.Core;
 using utility_sample.MVVM.Model;
 
@@ -12,7 +14,6 @@ namespace utility_sample.MVVM.ViewModel
     {
         // Data bindings
         public RelayCommand SaveCommand { get; set; }
-        public string ServiceUsername { get; set; }
         public string RootPrincipal { get; set; }
         public string PermissionGroup { get; set; }
         public string AuthnUrl { get; set; }
@@ -20,6 +21,7 @@ namespace utility_sample.MVVM.ViewModel
         public string DirectoryUrl { get; set; }
         public string MqttUrl { get; set; }
 
+        // FPlus instance
         private FPlusCommunicator _fPlusCommunicator;
         
         /// <summary>
@@ -30,21 +32,59 @@ namespace utility_sample.MVVM.ViewModel
             // Better practice might be to bind directly to the ConfigManager Settings from the view
             
             // TODO: Load saved variables if found
-            LoadSettings();
+            PopulateSettings();
             
             _fPlusCommunicator = FPlusCommunicator.GetInstance();
-            Debug.Print(_fPlusCommunicator.TestString);
             
             SaveCommand = new RelayCommand(o =>
             {
-                // TODO: Attempt to save variables
-                Debug.Print(_fPlusCommunicator.TestString);
+                SaveSettings();
             });
         }
 
-        private void LoadSettings()
+        private void SaveSettings()
         {
-            ServiceUsername = ConfigurationManager.AppSettings.Get("ServiceUsername") ?? string.Empty;
+            try
+            {
+                UpdateSetting("RootPrincipal", RootPrincipal);
+                UpdateSetting("PermissionGroup", PermissionGroup);
+                UpdateSetting("AuthnUrl", AuthnUrl);
+                UpdateSetting("ConfigDbUrl", ConfigDbUrl);
+                UpdateSetting("DirectoryUrl", DirectoryUrl);
+                UpdateSetting("MqttUrl", MqttUrl);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error while saving " + e.ToString());
+                Debug.WriteLine(e);
+                return;
+            }
+            
+            MessageBox.Show("Settings Saved");
+
+            // Refresh FPlus instance
+            _fPlusCommunicator.LoadSettings();
+        }
+
+        private void UpdateSetting(string key, string value)
+        {
+            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);  
+            var settings = configFile.AppSettings.Settings;  
+            if (settings[key] == null)  
+            {  
+                settings.Add(key, value);  
+            }  
+            else  
+            {  
+                settings[key].Value = value;  
+            }  
+            configFile.Save(ConfigurationSaveMode.Modified);  
+            ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+        }
+        
+        private void PopulateSettings()
+        {
+            // Populate UI elements with found data
             RootPrincipal = ConfigurationManager.AppSettings.Get("RootPrincipal") ?? string.Empty;
             PermissionGroup = ConfigurationManager.AppSettings.Get("PermissionGroup") ?? string.Empty;
             AuthnUrl = ConfigurationManager.AppSettings.Get("AuthnUrl") ?? string.Empty;

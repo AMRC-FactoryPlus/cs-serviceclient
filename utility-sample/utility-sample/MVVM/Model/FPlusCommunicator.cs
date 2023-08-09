@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using AMRC.FactoryPlus.ServiceClient;
 
 namespace utility_sample.MVVM.Model
@@ -10,9 +11,8 @@ namespace utility_sample.MVVM.Model
     {
         private static FPlusCommunicator _instance;
         
-        public string TestString;
-        
         private string _serviceUsername;
+        private string _servicePassword;
         private string _rootPrincipal;
         private string _permissionGroup;
         private string _authnUrl;
@@ -23,46 +23,36 @@ namespace utility_sample.MVVM.Model
         private ServiceClient _serviceClient;
 
         /// <summary>
-        /// TODO
+        /// Gets the current instance of this class
         /// </summary>
-        /// <param name="serviceUsername"></param>
-        /// <param name="rootPrincipal"></param>
-        /// <param name="permissionGroup"></param>
-        /// <param name="authnUrl"></param>
-        /// <param name="configDbUrl"></param>
-        /// <param name="directoryUrl"></param>
-        /// <param name="mqttUrl"></param>
-        public FPlusCommunicator(string serviceUsername, string rootPrincipal, string permissionGroup, string authnUrl,
-                                 string configDbUrl, string directoryUrl, string mqttUrl)
-        {
-            _serviceUsername = serviceUsername;
-            _rootPrincipal = rootPrincipal;
-            _permissionGroup = permissionGroup;
-            _authnUrl = authnUrl;
-            _configDbUrl = configDbUrl;
-            _directoryUrl = directoryUrl;
-            _mqttUrl = mqttUrl;
-
-            //_serviceClient = new ServiceClient();
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
+        /// <returns>FPlusCommunicator instance</returns>
         public static FPlusCommunicator GetInstance()
         {
             if (_instance == null)
             {
-                _instance = new FPlusCommunicator("","","","","","","");
+                _instance = new FPlusCommunicator();
+                _instance.LoadSettings();
             }
             return _instance;
         }
 
         /// <summary>
+        /// Loads settings from configuration manager
+        /// </summary>
+        public void LoadSettings()
+        {
+            _rootPrincipal = ConfigurationManager.AppSettings.Get("RootPrincipal") ?? string.Empty;
+            _permissionGroup = ConfigurationManager.AppSettings.Get("PermissionGroup") ?? string.Empty;
+            _authnUrl = ConfigurationManager.AppSettings.Get("AuthnUrl") ?? string.Empty;
+            _configDbUrl = ConfigurationManager.AppSettings.Get("ConfigDbUrl") ?? string.Empty;
+            _directoryUrl = ConfigurationManager.AppSettings.Get("DirectoryUrl") ?? string.Empty;
+            _mqttUrl = ConfigurationManager.AppSettings.Get("MqttUrl") ?? string.Empty;
+        }
+
+        /// <summary>
         /// TODO
         /// </summary>
-        public async void DoTest()
+        public async void DoTest(string username, string password)
         {
             var test = await _serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
         }

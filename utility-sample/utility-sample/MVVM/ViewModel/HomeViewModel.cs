@@ -13,10 +13,10 @@ namespace utility_sample.MVVM.ViewModel
     /// </summary>
     public class HomeViewModel: ObservableObject
     {
-        /// <summary>
-        /// TODO: implement command
-        /// </summary>
         public RelayCommand SubmitCommand { get; set; }
+        
+        public string ServiceUsername { get; set; }
+        public string ServicePassword { get; set; }
 
         private FPlusCommunicator _fPlusCommunicator;
         
@@ -29,8 +29,10 @@ namespace utility_sample.MVVM.ViewModel
             
             SubmitCommand = new RelayCommand(o =>
             {
-                // TODO: Submit F+ Request
-                MessageBox.Show(_fPlusCommunicator.TestString);
+                if (ServiceUsername != null && ServicePassword != null)
+                {
+                    _fPlusCommunicator.DoTest(ServiceUsername, ServicePassword);
+                }
             });
         }
     }
