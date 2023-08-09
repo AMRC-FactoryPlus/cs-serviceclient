@@ -18,6 +18,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <!-- Label -->
@@ -35,10 +36,17 @@
                  x:Name="InputTextBox" />
 
         <!-- Submit Button -->
-        <Button Grid.Row="2" Content="Submit" 
+        <Button Grid.Row="2" Content="Start Factory+ Stuff" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Center"
                 Margin="10" 
                 Command="{Binding SubmitCommand}"/>
+
+        <!-- Submit Button -->
+        <Button Grid.Row="3" Content="Stop Factory+ Stuff" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Center"
+                Margin="10" 
+                Command="{Binding CancelCommand}"/>
     </Grid>
 </UserControl>
