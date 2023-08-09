@@ -66,7 +66,7 @@
                  Text="Not implemented"/>
 
         <!-- Submit Button -->
-        <Button Grid.Row="6" Content="Submit" 
+        <Button Grid.Row="6" Content="Start Factory+ Stuff" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Center"
                 Margin="10" 

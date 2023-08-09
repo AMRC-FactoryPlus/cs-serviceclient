@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="Flurl.Http" Version="3.2.4" />
+      <PackageReference Include="MQTTnet" Version="4.2.1.781" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="UniTask" Version="2.3.3" />
     </ItemGroup>
