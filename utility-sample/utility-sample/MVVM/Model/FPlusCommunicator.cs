@@ -15,8 +15,6 @@ namespace utility_sample.MVVM.Model
     {
         private static FPlusCommunicator _instance;
         
-        private string _serviceUsername;
-        private string _servicePassword;
         private string _rootPrincipal;
         private string _permissionGroup;
         private string _authnUrl;
@@ -36,9 +34,14 @@ namespace utility_sample.MVVM.Model
             if (_instance == null)
             {
                 _instance = new FPlusCommunicator();
-                _instance.LoadSettings();
             }
             return _instance;
+        }
+
+        public FPlusCommunicator()
+        {
+            _serviceClient = new ServiceClient();
+            LoadSettings();
         }
 
         /// <summary>
@@ -56,15 +59,11 @@ namespace utility_sample.MVVM.Model
 
         public async void StartFPlusStuff(string username, string password)
         {
-            _serviceClient = new ServiceClient();
-            // var test = await serviceClient.ConfigDb.Search(UUIDs.App[AppSubcomponents.Info], new Dictionary<string, object>(), new Dictionary<string, string>(), null);
-            
             _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
 
             _serviceClient.Mqtt.OnMessageReceived += MessageReceived;
 
             await _mqttClient.SubscribeAsync("spBv1.0/#");
-            // MessageBox.Show(test.Length.ToString());
         }
         
         public async void StopFPlusStuff()

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Windows;
 using utility_sample.Core;
 using utility_sample.MVVM.Model;
 
@@ -29,6 +30,10 @@ namespace utility_sample.MVVM.ViewModel
                 if (ServiceUsername != null && ServicePassword != null)
                 {
                     _fPlusCommunicator.StartFPlusStuff(ServiceUsername, ServicePassword);
+                }
+                else
+                {
+                    MessageBox.Show("Please enter a username and password");
                 }
             });
             
