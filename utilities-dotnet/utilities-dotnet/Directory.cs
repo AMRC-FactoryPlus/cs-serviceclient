@@ -6,10 +6,10 @@ namespace AMRC.FactoryPlus.ServiceClient;
 
 public struct ServiceProvider
 {
-    public Guid Device;
+    public Guid? Device;
     public string Url;
 
-    public ServiceProvider(Guid device, string url)
+    public ServiceProvider(Guid? device, string url)
     {
         Device = device;
         Url = url;
@@ -54,6 +54,7 @@ public class Directory : ServiceInterface
             throw new Exception($"{res.Status}: Can't get service records for {service}");
         }
 
+        Debug.WriteLine($"{service} URLs: {res.Content}");
         var specs = JsonConvert.DeserializeObject<List<ServiceProvider>>(res.Content);
         return specs.Select(s => s.Url).Where(s => !String.IsNullOrEmpty(s)).ToArray();
     }
