@@ -1,7 +1,11 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Diagnostics;
+using System.Security.Authentication;
+using System.Windows;
 using AMRC.FactoryPlus.ServiceClient;
 using Com.Cirruslink.Sparkplug.Protobuf;
+using Flurl.Http;
 using MQTTnet;
 using MQTTnet.Client;
 
@@ -62,7 +66,24 @@ namespace utility_sample.MVVM.Model
 
             if (_mqttClient == null || !_mqttClient.IsConnected)
             {
-                _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
+                try
+                {
+                    _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
+                }
+                catch (AuthenticationException)
+                {
+                    MessageBox.Show("The username or password was incorrect");
+                    return;
+                }
+                catch (FlurlHttpTimeoutException e)
+                {
+                    MessageBox.Show($"Request to {e.Call.Request.Url} timed out, is the server contactable?");
+                }
+                catch (FlurlHttpException e)
+                {
+                    MessageBox.Show($"Request to {e.Call.Request.Url} failed");
+                    return;
+                }
                 _serviceClient.Mqtt.OnMessageReceived += MessageReceived;
             }
             
