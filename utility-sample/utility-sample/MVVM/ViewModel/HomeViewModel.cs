@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using utility_sample.Core;
 using utility_sample.MVVM.Model;
 

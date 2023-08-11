@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Diagnostics;
 using AMRC.FactoryPlus.ServiceClient;
 using Com.Cirruslink.Sparkplug.Protobuf;

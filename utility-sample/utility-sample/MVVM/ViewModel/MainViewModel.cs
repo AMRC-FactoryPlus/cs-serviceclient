@@ -1,5 +1,4 @@
-﻿using System;
-using utility_sample.Core;
+﻿using utility_sample.Core;
 using utility_sample.MVVM.Model;
 
 namespace utility_sample.MVVM.ViewModel
