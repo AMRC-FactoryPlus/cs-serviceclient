@@ -60,7 +60,7 @@ public class Discovery : ServiceInterface
 
     private async UniTask<string?[]> ServiceUrls(Guid service)
     {
-        if (_urls.TryGetValue(service, out var url))
+        if (_urls.TryGetValue(service, out var url) && !String.IsNullOrWhiteSpace(url))
         {
             Debug.WriteLine($"[{service}]Found {url} preconfigured");
             return new[] {url};
