@@ -78,6 +78,7 @@ namespace utility_sample.MVVM.Model
                 catch (FlurlHttpTimeoutException e)
                 {
                     MessageBox.Show($"Request to {e.Call.Request.Url} timed out, is the server contactable?");
+                    return;
                 }
                 catch (FlurlHttpException e)
                 {
