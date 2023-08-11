@@ -130,5 +130,10 @@ public class ServiceClient
         ConfigDbUrl = configDbUrl;
         DirectoryUrl = directoryUrl;
         MqttUrl = mqttUrl;
+
+        Discovery.SetServiceUrl(UUIDs.Service[ServiceTypes.Authentication], AuthnUrl);
+        Discovery.SetServiceUrl(UUIDs.Service[ServiceTypes.ConfigDB], ConfigDbUrl);
+        Discovery.SetServiceUrl(UUIDs.Service[ServiceTypes.Directory], DirectoryUrl);
+        Discovery.SetServiceUrl(UUIDs.Service[ServiceTypes.MQTT], MqttUrl);
     }
 }

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utility-sample", "utility-sample\utility-sample.csproj", "{14C7ABD2-8FBA-4D24-BA58-5848FFDBABB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utilities-dotnet", "..\utilities-dotnet\utilities-dotnet\utilities-dotnet.csproj", "{21BB1D3D-F83D-40B8-B076-8BA2A4171693}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{14C7ABD2-8FBA-4D24-BA58-5848FFDBABB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14C7ABD2-8FBA-4D24-BA58-5848FFDBABB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14C7ABD2-8FBA-4D24-BA58-5848FFDBABB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21BB1D3D-F83D-40B8-B076-8BA2A4171693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21BB1D3D-F83D-40B8-B076-8BA2A4171693}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21BB1D3D-F83D-40B8-B076-8BA2A4171693}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21BB1D3D-F83D-40B8-B076-8BA2A4171693}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

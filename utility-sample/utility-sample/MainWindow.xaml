@@ -3,10 +3,56 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:utility_sample.MVVM.ViewModel"
         xmlns:local="clr-namespace:utility_sample"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="MainWindow" Height="600" Width="920">
+        
+        <Window.DataContext>
+                <viewModel:MainViewModel></viewModel:MainViewModel>
+        </Window.DataContext>
+        
+        <Border Background="#272527">
+                <Grid>
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Text="Test App"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left"
+                                   Foreground="White"
+                                   FontSize="22"
+                                   Margin="20,0,0,0"/>
+                        
+                        <StackPanel Grid.Row="1">
+                                <RadioButton Content="Home"
+                                             Height="50"
+                                             Foreground="White"
+                                             FontSize="14"
+                                             Style="{StaticResource MenuButtonTheme}"
+                                             IsChecked="True"
+                                             Command="{Binding HomeViewCommand}"/>
+                                
+                                <RadioButton Content="Settings"
+                                             Height="50"
+                                             Foreground="White"
+                                             FontSize="14"
+                                             Style="{StaticResource MenuButtonTheme}"
+                                             Command="{Binding SettingsViewCommand}"/>
+                        </StackPanel>
+                        
+                        <ContentControl Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="10"
+                                        Content="{Binding CurrentView}"/>
+                        
+                </Grid>
+        </Border>
 </Window>

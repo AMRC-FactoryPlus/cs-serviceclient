@@ -82,7 +82,7 @@ public class ServiceInterface
             localHeaders["Content-Type"] = contentType ?? "application/json";
         }
         
-        Debug.Assert(String.IsNullOrWhiteSpace(ServiceClient.DirectoryUrl), "The provided DirectoryUrl is empty, which is unlikely to work.");
+        Debug.Assert(!String.IsNullOrWhiteSpace(ServiceClient.DirectoryUrl), "The provided DirectoryUrl is empty, which is unlikely to work.");
 
         if (_recursionCount > 6)
         {

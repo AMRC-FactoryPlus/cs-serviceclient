@@ -1,0 +1,138 @@
+﻿<UserControl x:Class="utility_sample.MVVM.View.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:utility_sample.MVVM.View"
+             xmlns:viewModel="clr-namespace:utility_sample.MVVM.ViewModel"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="Transparent">
+    
+    <UserControl.DataContext>
+        <viewModel:SettingsViewModel></viewModel:SettingsViewModel>
+    </UserControl.DataContext>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+               Content="Persistent Variables"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="20" />
+        
+        <!-- Pair 1 -->
+        <Label Grid.Column="0" Grid.Row="1"
+               Content="Root Principal"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+
+        <TextBox Grid.Column="1" Grid.Row="1" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="InputTextBox2"
+                 Text="{Binding Path=RootPrincipal}"/>
+        
+        <!-- Pair 2 -->
+        <Label Grid.Column="0" Grid.Row="2" 
+               Content="Permission Group"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+
+        <TextBox Grid.Column="1" Grid.Row="2" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="InputTextBox3"
+                 Text="{Binding Path=PermissionGroup}"/>
+        
+        <!-- Pair 3 -->
+        <Label Grid.Column="0" Grid.Row="3" 
+               Content="Authn Url"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+
+        <TextBox Grid.Column="1" Grid.Row="3" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="InputTextBox4"
+                 Text="{Binding Path=AuthnUrl}"/>
+        
+        <!-- Pair 4 -->
+        <Label Grid.Column="0" Grid.Row="4" 
+               Content="Config DB URL"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+
+        <TextBox Grid.Column="1" Grid.Row="4" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="InputTextBox5"
+                 Text="{Binding Path=ConfigDbUrl}"/>
+        
+        <!-- Pair 5 -->
+        <Label Grid.Column="0" Grid.Row="5" 
+               Content="Directory URL"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+
+        <TextBox Grid.Column="1" Grid.Row="5" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="InputTextBox6"
+                 Text="{Binding Path=DirectoryUrl}"/>
+        
+        <!-- Pair 6 -->
+        <Label Grid.Column="0" Grid.Row="6" 
+               Content="MQTT URL"
+               Foreground="White"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Margin="10" />
+
+        <TextBox Grid.Column="1" Grid.Row="6" 
+                 Width="200" 
+                 HorizontalAlignment="Left" 
+                 Margin="10" 
+                 x:Name="InputTextBox7"
+                 Text="{Binding Path=MqttUrl}"/>
+
+        <!-- Submit Button -->
+        <Button Grid.Column="0" Grid.Row="8" Content="Save" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Center"
+                Margin="10" 
+                Command="{Binding SaveCommand}"/>
+    </Grid>
+</UserControl>
