@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\utilities-dotnet\utilities-dotnet\utilities-dotnet.csproj" />
+      <ProjectReference Include="..\..\cs-serviceclient\cs-serviceclient\cs-serviceclient.csproj" />
     </ItemGroup>
 
     <ItemGroup>

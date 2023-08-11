@@ -1,4 +1,4 @@
-﻿namespace AMRC.FactoryPlus.ServiceClient;
+﻿namespace AMRC.FactoryPlus.ServiceClient.Constants;
 
 public enum AppSubcomponents
 {

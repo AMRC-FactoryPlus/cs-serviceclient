@@ -1,4 +1,8 @@
-﻿namespace AMRC.FactoryPlus.ServiceClient;
+﻿using AMRC.FactoryPlus.ServiceClient.Constants;
+using AMRC.FactoryPlus.ServiceClient.Services;
+using Directory = AMRC.FactoryPlus.ServiceClient.Services.Directory;
+
+namespace AMRC.FactoryPlus.ServiceClient;
 
 /// <summary>
 /// The ServiceClient holds interfaces with individual F+ services
