@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Security.Authentication;
 using Cysharp.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
@@ -169,9 +170,15 @@ public class FetchClass : ServiceInterface
             var authBytes = System.Text.Encoding.UTF8.GetBytes($"{ServiceClient.ServiceUsername}:{ServiceClient.ServicePassword}");
             var authString = Convert.ToBase64String(authBytes);
             var headers = AddAuthHeaders(null, "Basic", authString);
-            var response = await tokenUrl.WithHeaders(headers).PostAsync(null, CancellationToken.None).WaitAsync(CancellationToken.None);
-
-            return new FetchResponse(response.StatusCode, await response.GetStringAsync());
+            try {
+                var response = await tokenUrl.WithHeaders(headers).PostAsync(null, CancellationToken.None).WaitAsync(CancellationToken.None);
+                return new FetchResponse(response.StatusCode, await response.GetStringAsync());
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw new AuthenticationException("Unable to authenticate with Basic auth, are credentials correct?", e);
+            }
         }
 
         throw new Exception("Only Basic auth supported at this time. Ensure config has username and password");
