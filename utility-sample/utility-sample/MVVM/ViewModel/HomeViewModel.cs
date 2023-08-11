@@ -25,8 +25,8 @@ namespace utility_sample.MVVM.ViewModel
         /// </summary>
         public HomeViewModel()
         {
-            // TODO: Debug line, please remove:
-            Topic = "spBv1.0/#"; // Delete me!
+            // Set default value
+            Topic = "spBv1.0/#";
             
             _fPlusCommunicator = FPlusCommunicator.GetInstance();
             
