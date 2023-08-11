@@ -24,7 +24,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
+        <!-- Output Window -->
+        <ContentControl Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.RowSpan="8"
+                        Margin="10"
+                        Content="{Binding OutputViewModel}"/>
+        
         <!-- Username -->
         <Label Content="Username"
                Foreground="White"

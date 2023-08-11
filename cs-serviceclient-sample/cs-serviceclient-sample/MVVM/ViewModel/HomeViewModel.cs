@@ -9,6 +9,7 @@ namespace utility_sample.MVVM.ViewModel
     /// </summary>
     public class HomeViewModel: ObservableObject
     {
+        public OutputViewModel OutputViewModel { get; set; }
         public RelayCommand SubmitCommand { get; set; }
         
         public string ServiceUsername { get; set; }
@@ -18,12 +19,15 @@ namespace utility_sample.MVVM.ViewModel
         public RelayCommand CancelCommand { get; set; }
 
         private FPlusCommunicator _fPlusCommunicator;
+        private OutputViewModel _outputViewModel;
         
         /// <summary>
         /// Constructor for making an instance of the settings view model
         /// </summary>
         public HomeViewModel()
         {
+            OutputViewModel = new OutputViewModel();
+            
             // Set default value
             Topic = "spBv1.0/#";
             
