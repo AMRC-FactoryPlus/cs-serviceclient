@@ -170,14 +170,22 @@ public class FetchClass : ServiceInterface
             var authBytes = System.Text.Encoding.UTF8.GetBytes($"{ServiceClient.ServiceUsername}:{ServiceClient.ServicePassword}");
             var authString = Convert.ToBase64String(authBytes);
             var headers = AddAuthHeaders(null, "Basic", authString);
-            try {
-                var response = await tokenUrl.WithHeaders(headers).PostAsync(null, CancellationToken.None).WaitAsync(CancellationToken.None);
+            try
+            {
+                var response = await tokenUrl.WithTimeout(5).WithHeaders(headers)
+                                             .PostAsync(null, CancellationToken.None).WaitAsync(CancellationToken.None);
                 return new FetchResponse(response.StatusCode, await response.GetStringAsync());
             }
-            catch (Exception e)
+            catch (FlurlHttpException e)
             {
                 Debug.WriteLine(e);
-                throw new AuthenticationException("Unable to authenticate with Basic auth, are credentials correct?", e);
+                if (e.StatusCode is 401)
+                {
+                    throw new AuthenticationException(
+                        "Unable to authenticate with Basic auth, are credentials correct?", e);
+                }
+
+                throw;
             }
         }
 
