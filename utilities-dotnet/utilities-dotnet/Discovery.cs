@@ -8,12 +8,12 @@ namespace AMRC.FactoryPlus.ServiceClient;
 /// </summary>
 public class Discovery : ServiceInterface
 {
-    private readonly Dictionary<Guid, string> _urls;
+    private readonly Dictionary<Guid, string?> _urls;
 
     /// <inheritdoc />
     public Discovery(ServiceClient serviceClient) : base(serviceClient)
     {
-        _urls = new Dictionary<Guid, string>();
+        _urls = new Dictionary<Guid, string?>();
         Dictionary<Guid, string?> presets = new()
         {
             {UUIDs.Service[ServiceTypes.Authentication], ServiceClient.AuthnUrl},
@@ -55,7 +55,7 @@ public class Discovery : ServiceInterface
     public async UniTask<string?> ServiceUrl(Guid service)
     {
         var urls = await ServiceUrls(service);
-        return urls.Length > 0 ? urls[0] : null;
+        return String.IsNullOrWhiteSpace(urls[0]) ? null : urls[0];
     }
 
     private async UniTask<string?[]> ServiceUrls(Guid service)
@@ -77,7 +77,7 @@ public class Discovery : ServiceInterface
         return Array.Empty<string>();
     }
 
-    private void SetServiceUrl(Guid service, string url)
+    internal void SetServiceUrl(Guid service, string? url)
     {
         _urls[service] = url;
     }
