@@ -64,7 +64,7 @@
                  HorizontalAlignment="Left" 
                  Margin="10" 
                  x:Name="TopicTextBox"
-                 Text="Not implemented"/>
+                 Text="{Binding Path=Topic}"/>
 
         <!-- Submit Button -->
         <Button Grid.Row="6" Content="Start Factory+ Stuff" 

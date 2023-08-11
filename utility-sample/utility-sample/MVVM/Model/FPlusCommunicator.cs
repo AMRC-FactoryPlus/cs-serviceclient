@@ -40,7 +40,7 @@ namespace utility_sample.MVVM.Model
 
         public FPlusCommunicator()
         {
-            _serviceClient = new ServiceClient();
+            _serviceClient = new ServiceClient(null,null,null);
             LoadSettings();
         }
 
@@ -57,18 +57,20 @@ namespace utility_sample.MVVM.Model
             _mqttUrl = ConfigurationManager.AppSettings.Get("MqttUrl") ?? string.Empty;
         }
 
-        public async void StartFPlusStuff(string username, string password)
+        public async void StartFPlusStuff(string username, string password, string topic)
         {
+            _serviceClient.UpdateConfig(username, password, _rootPrincipal, _permissionGroup, _authnUrl, _configDbUrl, _directoryUrl, _mqttUrl);
+            
             _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
 
             _serviceClient.Mqtt.OnMessageReceived += MessageReceived;
 
-            await _mqttClient.SubscribeAsync("spBv1.0/#");
+            await _mqttClient.SubscribeAsync(topic);
         }
         
-        public async void StopFPlusStuff()
+        public async void StopFPlusStuff(string topic)
         {
-            await _mqttClient.UnsubscribeAsync("spBv1.0/#");
+            await _mqttClient.UnsubscribeAsync(topic);
             await _mqttClient.DisconnectAsync();
         }
 
