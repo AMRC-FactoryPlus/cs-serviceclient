@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
+using AMRC.FactoryPlus.ServiceClient.Constants;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace AMRC.FactoryPlus.ServiceClient;
+namespace AMRC.FactoryPlus.ServiceClient.Services;
 
 /// <summary>
 /// The response expected from a Fetch request

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utilities-dotnet", "utilities-dotnet\utilities-dotnet.csproj", "{D7D5321B-F4DC-4561-A160-51BEDB8EE2C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cs-serviceclient", "cs-serviceclient\cs-serviceclient.csproj", "{D7D5321B-F4DC-4561-A160-51BEDB8EE2C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

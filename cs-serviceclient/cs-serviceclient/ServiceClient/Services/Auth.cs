@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Runtime.Serialization;
+using AMRC.FactoryPlus.ServiceClient.Constants;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using Semver;
 
-namespace AMRC.FactoryPlus.ServiceClient;
+namespace AMRC.FactoryPlus.ServiceClient.Services;
 
 public struct PostAceBody
 {

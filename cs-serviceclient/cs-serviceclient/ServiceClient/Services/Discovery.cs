@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using AMRC.FactoryPlus.ServiceClient.Constants;
 using Cysharp.Threading.Tasks;
 
-namespace AMRC.FactoryPlus.ServiceClient;
+namespace AMRC.FactoryPlus.ServiceClient.Services;
 
 /// <summary>
 /// The Discover service interface

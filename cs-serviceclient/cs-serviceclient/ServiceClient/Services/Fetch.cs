@@ -4,7 +4,7 @@ using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json;
 
-namespace AMRC.FactoryPlus.ServiceClient;
+namespace AMRC.FactoryPlus.ServiceClient.Services;
 
 public struct TokenStruct
 {

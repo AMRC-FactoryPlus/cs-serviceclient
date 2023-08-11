@@ -1,9 +1,10 @@
-﻿using Com.Cirruslink.Sparkplug.Protobuf;
+﻿using AMRC.FactoryPlus.ServiceClient.Constants;
+using Com.Cirruslink.Sparkplug.Protobuf;
 using Cysharp.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
 
-namespace AMRC.FactoryPlus.ServiceClient;
+namespace AMRC.FactoryPlus.ServiceClient.Services;
 
 /// <summary>
 /// The MQTT service interface
