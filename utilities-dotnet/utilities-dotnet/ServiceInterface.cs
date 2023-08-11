@@ -1,5 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
-using Flurl.Http;
+﻿using System.Diagnostics;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace AMRC.FactoryPlus.ServiceClient;
@@ -50,6 +50,8 @@ public class ServiceInterface
     /// The ServiceType that this service is
     /// </summary>
     internal ServiceTypes ServiceType;
+
+    private int _recursionCount = 0;
     
     /// <summary>
     /// Creates a ServiceInterface object
@@ -79,8 +81,17 @@ public class ServiceInterface
         {
             localHeaders["Content-Type"] = contentType ?? "application/json";
         }
+        
+        Debug.Assert(String.IsNullOrWhiteSpace(ServiceClient.DirectoryUrl), "The provided DirectoryUrl is empty, which is unlikely to work.");
 
+        if (_recursionCount > 6)
+        {
+            throw new Exception("Fetch recursion detected, unable to lookup the required service URLs. Have you provided a working Directory URL?");
+        }
+
+        _recursionCount++;
         var res = await ServiceClient.Fetch.Fetch(url, method, query, UUIDs.Service[ServiceType], body, localHeaders, accept, contentType);
+        _recursionCount = 0;
         return new FetchResponse(res.Status, res.Content);
     }
 
