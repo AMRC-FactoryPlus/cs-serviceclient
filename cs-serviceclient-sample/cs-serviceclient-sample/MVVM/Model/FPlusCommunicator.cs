@@ -22,7 +22,7 @@ namespace utility_sample.MVVM.Model
         private string _mqttUrl;
 
         private ServiceClient _serviceClient;
-        private IMqttClient _mqttClient;
+        private IMqttClient? _mqttClient = null;
 
         /// <summary>
         /// Gets the current instance of this class
@@ -59,17 +59,18 @@ namespace utility_sample.MVVM.Model
         public async void StartFPlusStuff(string username, string password, string topic)
         {
             _serviceClient.UpdateConfig(username, password, _rootPrincipal, _permissionGroup, _authnUrl, _configDbUrl, _directoryUrl, _mqttUrl);
+
+            if (_mqttClient == null || !_mqttClient.IsConnected)
+            {
+                _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
+                _serviceClient.Mqtt.OnMessageReceived += MessageReceived;
+            }
             
-            _mqttClient = await _serviceClient.Mqtt.GetMqttClient();
-
-            _serviceClient.Mqtt.OnMessageReceived += MessageReceived;
-
             await _mqttClient.SubscribeAsync(topic);
         }
         
         public async void StopFPlusStuff(string topic)
         {
-            await _mqttClient.UnsubscribeAsync(topic);
             await _mqttClient.DisconnectAsync();
         }
 
