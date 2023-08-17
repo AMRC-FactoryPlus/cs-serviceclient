@@ -1,4 +1,5 @@
 ﻿using System;
+using utility_sample.Core;
 
 namespace utility_sample.MVVM.Model
 {
@@ -9,15 +10,20 @@ namespace utility_sample.MVVM.Model
     {
         /// <summary>
         /// 
-        /// </summary>
-        public DateTime Time { get; set; }
+        /// </summary>m
+        public DateTime Time { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        public string Content { get; set; }
+        public string Topic { get; private set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Content { get; private set; }
 
-        public OutputItem(string content, DateTime? dateTime = null)
+        public OutputItem(string topic, string content, DateTime? dateTime = null)
         {
+            Topic = topic;
             Time = dateTime ?? DateTime.Now;
             Content = content;
         }

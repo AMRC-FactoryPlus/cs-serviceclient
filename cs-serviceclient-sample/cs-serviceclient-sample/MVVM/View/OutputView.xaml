@@ -13,15 +13,16 @@
         <viewModel:OutputViewModel></viewModel:OutputViewModel>
     </UserControl.DataContext>
     
-    <ListBox ItemsSource="{Binding OutputItems}"
-             Height="450">
-        <ListBox.ItemTemplate>
+    <ItemsControl ItemsSource="{Binding OutputItems}"
+                   Height="450">
+        <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="{Binding Path=Time}"></TextBlock>
-                    <TextBlock Text="{Binding Path=Content}"></TextBlock>
+                    <TextBlock Text="{Binding Path=Topic}"/>
+                    <TextBlock Text="{Binding Path=Time}"/>
+                    <TextBlock Text="{Binding Path=Content}"/>
                 </StackPanel>
             </DataTemplate>
-        </ListBox.ItemTemplate>
-    </ListBox>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>

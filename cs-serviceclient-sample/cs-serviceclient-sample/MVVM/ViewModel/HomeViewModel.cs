@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using Com.Cirruslink.Sparkplug.Protobuf;
+using MQTTnet;
 using utility_sample.Core;
 using utility_sample.MVVM.Model;
 
@@ -19,7 +22,6 @@ namespace utility_sample.MVVM.ViewModel
         public RelayCommand CancelCommand { get; set; }
 
         private FPlusCommunicator _fPlusCommunicator;
-        private OutputViewModel _outputViewModel;
         
         /// <summary>
         /// Constructor for making an instance of the settings view model
@@ -32,6 +34,7 @@ namespace utility_sample.MVVM.ViewModel
             Topic = "spBv1.0/#";
             
             _fPlusCommunicator = FPlusCommunicator.GetInstance();
+            _fPlusCommunicator.DistributeMessage += MessageReceived;
             
             SubmitCommand = new RelayCommand(o =>
             {
@@ -49,6 +52,17 @@ namespace utility_sample.MVVM.ViewModel
             {
                 _fPlusCommunicator.StopFPlusStuff(Topic);
             });
+        }
+
+        ~HomeViewModel()
+        {
+            _fPlusCommunicator.DistributeMessage -= MessageReceived;
+        }
+        
+        private void MessageReceived(MqttApplicationMessage mqttMessageObject, Payload payload)
+        {
+            var outputItem = new OutputItem(mqttMessageObject.Topic, payload.Metrics.Count + " " + payload.Metrics ?? string.Empty, DateTimeOffset.FromUnixTimeMilliseconds(Convert.ToInt64(payload.Timestamp)).DateTime);
+            OutputViewModel.AddItem(outputItem);
         }
     }
 }
