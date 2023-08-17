@@ -6,14 +6,22 @@
         xmlns:local="clr-namespace:utility_sample.MVVM.View"
         xmlns:viewModel="clr-namespace:utility_sample.MVVM.ViewModel"
         mc:Ignorable="d"
-        d:DesignHeight="450" d:DesignWidth="800"
+        d:DesignHeight="450" d:DesignWidth="1000"
         Background="White">
     
     <UserControl.DataContext>
         <viewModel:OutputViewModel></viewModel:OutputViewModel>
     </UserControl.DataContext>
     
-    <Grid>
-        <Label>test</Label>
-    </Grid>
+    <ListBox ItemsSource="{Binding OutputItems}"
+             Height="450">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{Binding Path=Time}"></TextBlock>
+                    <TextBlock Text="{Binding Path=Content}"></TextBlock>
+                </StackPanel>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>
