@@ -41,6 +41,7 @@ namespace utility_sample.MVVM.ViewModel
                 if (ServiceUsername != null && ServicePassword != null && Topic != null)
                 {
                     _fPlusCommunicator.StartFPlusStuff(ServiceUsername, ServicePassword, Topic);
+                    OutputViewModel.AddItem(new OutputItem("click", "button"));
                 }
                 else
                 {
