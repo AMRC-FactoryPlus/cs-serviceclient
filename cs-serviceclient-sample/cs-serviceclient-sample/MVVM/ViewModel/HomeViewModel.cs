@@ -12,13 +12,29 @@ namespace utility_sample.MVVM.ViewModel
     /// </summary>
     public class HomeViewModel: ObservableObject
     {
+        /// <summary>
+        /// Viewmodel of the output display window
+        /// </summary>
         public OutputViewModel OutputViewModel { get; set; }
+        /// <summary>
+        /// Submit command for starting F+
+        /// </summary>
         public RelayCommand SubmitCommand { get; set; }
-        
+        /// <summary>
+        /// Username to use for F+ functions
+        /// </summary>
         public string ServiceUsername { get; set; }
+        /// <summary>
+        /// Password to use for F+ functions TODO: Improve security?
+        /// </summary>
         public string ServicePassword { get; set; }
+        /// <summary>
+        /// Topic to query for F+ functions
+        /// </summary>
         public string Topic { get; set; }
-
+        /// <summary>
+        /// Command to stop querying F+
+        /// </summary>
         public RelayCommand CancelCommand { get; set; }
 
         private FPlusCommunicator _fPlusCommunicator;

@@ -9,10 +9,6 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent">
     
-    <UserControl.DataContext>
-        <viewModel:HomeViewModel></viewModel:HomeViewModel>
-    </UserControl.DataContext>
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

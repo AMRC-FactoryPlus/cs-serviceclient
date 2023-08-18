@@ -9,12 +9,8 @@
         d:DesignHeight="450" d:DesignWidth="1000"
         Background="White">
     
-    <UserControl.DataContext>
-        <viewModel:OutputViewModel></viewModel:OutputViewModel>
-    </UserControl.DataContext>
-    
     <ItemsControl ItemsSource="{Binding OutputItems}"
-                   Height="450">
+                  Height="450">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Vertical">
@@ -25,4 +21,5 @@
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
+    
 </UserControl>
