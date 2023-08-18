@@ -33,10 +33,6 @@ namespace utility_sample.MVVM.ViewModel
         public OutputViewModel()
         {
             OutputItems = new ObservableCollection<OutputItem>();
-
-            var testitem = new OutputItem("testtopic", "testcontent", DateTime.Now);
-            AddItem(testitem);
-
             AddStuff();
         }
 
