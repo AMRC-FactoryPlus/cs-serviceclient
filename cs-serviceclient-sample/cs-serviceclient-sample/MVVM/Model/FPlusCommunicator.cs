@@ -16,6 +16,9 @@ namespace utility_sample.MVVM.Model
     /// </summary>
     public class FPlusCommunicator
     {
+        public delegate void DistributeMessageHandler(MqttApplicationMessage mqttMessageObject, Payload payload);
+        public event DistributeMessageHandler DistributeMessage;
+
         private static FPlusCommunicator _instance;
         
         private string _rootPrincipal;
@@ -102,9 +105,11 @@ namespace utility_sample.MVVM.Model
             {
                 return;
             }
-            Debug.WriteLine($"Message received on: {mqttMessageObject.Topic}");
-            Debug.WriteLine(payload.Metrics.Count);
-            Debug.WriteLine(payload.Metrics);
+            // Debug.WriteLine($"Message received on: {mqttMessageObject.Topic}");
+            // Debug.WriteLine(payload.Metrics.Count);
+            // Debug.WriteLine(payload.Metrics);
+            
+            DistributeMessage?.Invoke(mqttMessageObject, payload);
         }
     }
 }
